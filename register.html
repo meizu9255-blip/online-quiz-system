@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuizKZ - Тіркелу</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+  (function() {
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark-mode');
+    }
+  })();
+</script>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-left">
+      <div class="auth-card">
+        <div class="logo-icon">QuizKZ</div>
+        <h1>Тіркелу</h1>
+        <p class="subtitle">Жаңа аккаунт жасап, тест тапсырыңыз</p>
+        
+        <form id="registerForm" onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label for="username">Пайдаланушы аты</label>
+            <input type="text" id="username" placeholder="Кемінде 3 таңба">
+            <p class="error-message"></p>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="example@mail.com">
+            <p class="error-message"></p>
+          </div>
+          <div class="form-group">
+            <label for="password">Құпия сөз</label>
+            <input type="password" id="password" placeholder="Кемінде 6 таңба">
+            <p class="error-message"></p>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Құпия сөзді қайталаңыз</label>
+            <input type="password" id="confirmPassword" placeholder="Құпия сөзді қайталаңыз">
+            <p class="error-message"></p>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" style="margin-top:0.25rem">Тіркелу</button>
+        </form>
+        
+        <p style="text-align:center;margin-top:1.25rem;color:var(--text-secondary);font-size:0.8125rem">
+          Аккаунтыңыз бар ма? <a href="index.html" style="font-weight:600">Кіру</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="auth-right">
+      <div class="auth-right-content">
+        <h2>Білім - ең үлкен байлық</h2>
+        <p>Тіркеліп, әртүрлі пәндер бойынша өз білімді тексеріңіз</p>
+        <div class="auth-features">
+          <div class="feature-item">
+            <div class="feature-icon">+</div>
+            <span>Тегін тіркелу және қолдану</span>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">~</div>
+            <span>HTML, CSS, JS, Желілер, Қауіпсіздік</span>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">*</div>
+            <span>Нәтижелерді қадағалау мүмкіндігі</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script>checkAuth(false);</script>
+  <script src="js/theme.js"></script>
+<script>applyThemeIcon();</script>
+</body>
+</html>

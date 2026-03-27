@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuizKZ - Профиль</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    (function() {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark-mode');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="dashboard.html" class="logo"><span>Quiz</span>KZ</a>
+    <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="dashboard.html">Басты бет</a></li>
+      <li><a href="results.html">Нәтижелер</a></li>
+      <li><a href="leaderboard.html">Рейтинг</a></li>
+      <li><a href="profile.html" class="active">Профиль</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="btn-theme" id="themeToggle" onclick="toggleTheme()">
+        <span id="themeIcon">L</span>
+      </button>
+      <div class="nav-user" id="navUser"></div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Менің профилім</h1>
+      <p>Жеке ақпарат және статистика</p>
+    </div>
+
+    <div class="profile-grid">
+      <div class="profile-sidebar">
+        <div class="profile-avatar" id="profileAvatar">A</div>
+        <h2 class="profile-name" id="profileName">-</h2>
+        <p class="profile-email" id="profileEmail">-</p>
+        <div class="profile-stats">
+          <div class="profile-stat">
+            <div class="number" id="statTests">0</div>
+            <div class="label">Тесттер</div>
+          </div>
+          <div class="profile-stat">
+            <div class="number" id="statAvg">0%</div>
+            <div class="label">Орташа</div>
+          </div>
+          <div class="profile-stat">
+            <div class="number" id="statBest">0%</div>
+            <div class="label">Ең жоғары</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-main">
+        <h2 style="margin-bottom:1.5rem;font-size:1.125rem;">Ақпаратты өзгерту</h2>
+        <form id="profileForm" onsubmit="updateProfile(event)">
+          <div class="form-group">
+            <label for="editUsername">Пайдаланушы аты</label>
+            <input type="text" id="editUsername" placeholder="Пайдаланушы аты">
+            <p class="error-message"></p>
+          </div>
+          <div class="form-group">
+            <label for="editEmail">Email</label>
+            <input type="email" id="editEmail" placeholder="Email">
+            <p class="error-message"></p>
+          </div>
+          <div class="form-group">
+            <label for="editPassword">Жаңа құпия сөз (міндетті емес)</label>
+            <input type="password" id="editPassword" placeholder="Бос қалдырсаңыз өзгермейді">
+            <p class="error-message"></p>
+          </div>
+          <button type="submit" class="btn btn-primary">Сақтау</button>
+        </form>
+
+        <hr style="margin:2rem 0;border:none;border-top:1px solid var(--border);">
+
+        <h2 style="margin-bottom:1rem;font-size:1.125rem;">Соңғы нәтижелер</h2>
+        <div id="recentResults"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2026 QuizKZ — Онлайн тест тапсыру жүйесі</p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/profile.js"></script>
+  <script>applyThemeIcon();</script>
+</body>
+</html>

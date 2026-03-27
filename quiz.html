@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuizKZ - Тест тапсыру</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+  (function() {
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark-mode');
+    }
+  })();
+</script>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="dashboard.html" class="logo"><span>QuizKZ</span></a>
+    <div class="nav-user" id="navUser"></div>
+  </nav>
+
+  <main class="main-content quiz-container">
+    <div class="quiz-header">
+      <h2 class="quiz-title" id="quizTitle">Тест жүктелуде...</h2>
+      <div class="quiz-timer" id="quizTimer">
+        <span id="timerDisplay">00:00</span>
+      </div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-text">
+        <span id="progressText">Сұрақ 1 / 10</span>
+        <span id="progressPercent">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div id="questionContainer"></div>
+
+    <div class="quiz-nav">
+      <button class="btn btn-outline" id="btnPrev" onclick="prevQuestion()" disabled>
+        Алдыңғы
+      </button>
+      <button class="btn btn-primary" id="btnNext" onclick="nextQuestion()">
+        Келесі
+      </button>
+      <button class="btn btn-success hidden" id="btnFinish" onclick="finishQuiz()">
+        Аяқтау
+      </button>
+    </div>
+  </main>
+
+  <div class="modal-overlay hidden" id="confirmModal">
+    <div class="modal">
+      <h2>Тестті аяқтау</h2>
+      <p id="confirmText">Тестті аяқтағыңыз келе ме?</p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeModal()">Жоқ, жалғастыру</button>
+        <button class="btn btn-success" onclick="submitQuiz()">Иә, аяқтау</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/theme.js"></script>
+<script>applyThemeIcon();</script>
+</body>
+</html>
