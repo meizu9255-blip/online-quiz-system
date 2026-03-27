@@ -16,4 +16,8 @@ QuizKZ - бұл HTML, CSS және JavaScript технологияларымен
 - JavaScript (ES6+) - DOM manipulation, Event handling, localStorage API
 - localStorage - деректерді сақтау (пайдаланушылар, тесттер, нәтижелер)
 
-## Жоба құрылымы
+## Сайт сілтемесі
+https://singular-froyo-ea0dc6.netlify.app
+
+## GitHub
+https://github.com/meizu9255-blip/online-quiz-system
