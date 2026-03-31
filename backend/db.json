@@ -1,0 +1,148 @@
+{
+  "results": [
+    {
+      "id": 1774849282872,
+      "quizId": 1,
+      "quizTitle": "HTML негіздері",
+      "score": 100,
+      "correctCount": 10,
+      "totalQuestions": 10,
+      "timeSpent": 13,
+      "date": "2026-03-30T05:41:22.872Z",
+      "username": "bekss21"
+    },
+    {
+      "id": 1774849718324,
+      "quizId": 1,
+      "quizTitle": "HTML негіздері",
+      "score": 100,
+      "correctCount": 10,
+      "totalQuestions": 10,
+      "timeSpent": 14,
+      "date": "2026-03-30T05:48:38.324Z",
+      "username": "bekss21",
+      "answers": [
+        {
+          "question": "HTML аббревиатурасы нені білдіреді?",
+          "options": [
+            "Hyper Text Markup Language",
+            "High Tech Modern Language",
+            "Hyper Transfer Markup Language",
+            "Home Tool Markup Language"
+          ],
+          "userAnswer": 0,
+          "correctAnswer": 0,
+          "isCorrect": true
+        },
+        {
+          "question": "HTML құжатының құрылымын бастайтын тег қайсы?",
+          "options": [
+            "body",
+            "head",
+            "DOCTYPE html",
+            "html"
+          ],
+          "userAnswer": 2,
+          "correctAnswer": 2,
+          "isCorrect": true
+        },
+        {
+          "question": "Тақырып жасау үшін қандай тег қолданылады?",
+          "options": [
+            "h6 тегі",
+            "h1 тегі",
+            "title тегі",
+            "heading тегі"
+          ],
+          "userAnswer": 1,
+          "correctAnswer": 1,
+          "isCorrect": true
+        },
+        {
+          "question": "Гиперсілтеме жасау үшін қандай тег қолданылады?",
+          "options": [
+            "link тегі",
+            "href тегі",
+            "a тегі",
+            "url тегі"
+          ],
+          "userAnswer": 2,
+          "correctAnswer": 2,
+          "isCorrect": true
+        },
+        {
+          "question": "Сурет қою үшін қандай тег қолданылады?",
+          "options": [
+            "image тегі",
+            "pic тегі",
+            "photo тегі",
+            "img тегі"
+          ],
+          "userAnswer": 3,
+          "correctAnswer": 3,
+          "isCorrect": true
+        },
+        {
+          "question": "Нөмірленбеген тізім жасау үшін қандай тег қолданылады?",
+          "options": [
+            "ol тегі",
+            "list тегі",
+            "ul тегі",
+            "dl тегі"
+          ],
+          "userAnswer": 2,
+          "correctAnswer": 2,
+          "isCorrect": true
+        },
+        {
+          "question": "HTML-де комментарий жазу синтаксисі қандай?",
+          "options": [
+            "// comment",
+            "/* comment */",
+            "!-- comment --",
+            "# comment"
+          ],
+          "userAnswer": 2,
+          "correctAnswer": 2,
+          "isCorrect": true
+        },
+        {
+          "question": "Кесте жасау үшін қандай тег қолданылады?",
+          "options": [
+            "tab тегі",
+            "table тегі",
+            "grid тегі",
+            "tbl тегі"
+          ],
+          "userAnswer": 1,
+          "correctAnswer": 1,
+          "isCorrect": true
+        },
+        {
+          "question": "Форма жасау үшін қандай тег қолданылады?",
+          "options": [
+            "input тегі",
+            "form тегі",
+            "field тегі",
+            "submit тегі"
+          ],
+          "userAnswer": 1,
+          "correctAnswer": 1,
+          "isCorrect": true
+        },
+        {
+          "question": "HTML5-те видео қою үшін қандай тег қолданылады?",
+          "options": [
+            "media тегі",
+            "movie тегі",
+            "video тегі",
+            "film тегі"
+          ],
+          "userAnswer": 2,
+          "correctAnswer": 2,
+          "isCorrect": true
+        }
+      ]
+    }
+  ]
+}
