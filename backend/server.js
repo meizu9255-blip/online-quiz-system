@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 // ==========================================
-// 1. АВТОРИЗАЦИЯ ЖӘНЕ ТІРКЕЛУ (ЖАҢА)
+// 1. АВТОРИЗАЦИЯ ЖӘНЕ ТІРКЕЛУ
 // ==========================================
 
 // Тіркелу (Register)
@@ -26,17 +26,14 @@ app.post('/api/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
 
-        // 1. Пайдаланушы бар-жоғын тексеру
         const userExists = await pool.query('SELECT * FROM users WHERE email = $1 OR username = $2', [email, username]);
         if (userExists.rows.length > 0) {
             return res.status(400).json({ error: "Бұл Email немесе Пайдаланушы аты бос емес!" });
         }
 
-        // 2. Құпия сөзді шифрлау (Hashing)
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
 
-        // 3. Базаға сақтау
         const newUser = await pool.query(
             'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email',
             [username, email, passwordHash]
@@ -54,19 +51,16 @@ app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // 1. Пайдаланушыны Email арқылы іздеу
         const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
         if (user.rows.length === 0) {
             return res.status(400).json({ error: "Қате: Бұл пошта тіркелмеген!" });
         }
 
-        // 2. Құпия сөзді тексеру
         const validPassword = await bcrypt.compare(password, user.rows[0].password_hash);
         if (!validPassword) {
             return res.status(400).json({ error: "Қате: Құпия сөз дұрыс емес!" });
         }
 
-        // 3. Сәтті кіру
         res.json({ id: user.rows[0].id, username: user.rows[0].username, email: user.rows[0].email });
     } catch (err) {
         console.error(err.message);
@@ -74,8 +68,9 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+
 // ==========================================
-// 2. НӘТИЖЕЛЕРДІ САҚТАУ ЖӘНЕ АЛУ (ЕСКІ)
+// 2. НӘТИЖЕЛЕРДІ САҚТАУ ЖӘНЕ АЛУ
 // ==========================================
 
 app.get('/api/results', async (req, res) => {
@@ -101,6 +96,152 @@ app.post('/api/results', async (req, res) => {
     }
 });
 
+
+// ==========================================
+// 3. ТЕСТТЕРДІ БАСҚАРУ (REST API АДМИН ПАНЕЛЬ ҮШІН)
+// ==========================================
+
+// GET: Барлық тесттерді алу
+app.get('/api/quizzes', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM quizzes ORDER BY id ASC');
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST: Жаңа тест қосу (Сұрақтарымен бірге)
+app.post('/api/quizzes', async (req, res) => {
+    try {
+        const { title, category, difficulty, questions } = req.body;
+        const newQuiz = await pool.query(
+            'INSERT INTO quizzes (title, category, difficulty, questions) VALUES ($1, $2, $3, $4) RETURNING *',
+            [title, category, difficulty, JSON.stringify(questions)]
+        );
+        res.status(201).json(newQuiz.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Тестті қосу кезінде қате шықты" });
+    }
+});
+
+// PUT: Тестті өзгерту
+app.put('/api/quizzes/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, category, difficulty, questions } = req.body;
+        const updateQuiz = await pool.query(
+            'UPDATE quizzes SET title = $1, category = $2, difficulty = $3, questions = $4 WHERE id = $5 RETURNING *',
+            [title, category, difficulty, JSON.stringify(questions), id]
+        );
+
+        if (updateQuiz.rows.length === 0) {
+            return res.status(404).json({ error: "Тест табылмады" });
+        }
+        res.json(updateQuiz.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: "Тестті жаңарту кезінде қате шықты" });
+    }
+});
+
+// DELETE: Тестті өшіру
+app.delete('/api/quizzes/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deleteQuiz = await pool.query('DELETE FROM quizzes WHERE id = $1 RETURNING *', [id]);
+        
+        if (deleteQuiz.rows.length === 0) {
+            return res.status(404).json({ error: "Тест табылмады" });
+        }
+        res.json({ message: "Тест сәтті өшірілді!" });
+    } catch (err) {
+        res.status(500).json({ error: "Тестті өшіру кезінде қате шықты" });
+    }
+});
+
+
 app.listen(PORT, () => {
     console.log(`Сервер қосылды: http://localhost:${PORT}`);
-}); 
+});
+app.post('/api/results', async (req, res) => {
+    try {
+        const { quizId, quizTitle, score, correctCount, timeSpent, username, answers } = req.body;
+
+        // 1. Пайдаланушының ID-ін тауып аламыз (username арқылы)
+        const userQuery = await pool.query('SELECT id FROM users WHERE username = $1', [username]);
+        const userId = userQuery.rows[0]?.id;
+
+        if (!userId) {
+            return res.status(404).json({ error: "Пайдаланушы табылмады" });
+        }
+
+        // 2. Нәтижені Results кестесіне сақтау
+        const newResult = await pool.query(
+            `INSERT INTO results (user_id, quiz_id, quiz_title, score, correct_count, time_spent, answers) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+            [userId, quizId, quizTitle, score, correctCount, timeSpent, JSON.stringify(answers)]
+        );
+
+        // 3. РЕЙТИНГТІ АВТОМАТТАНДЫРУ (Leaderboard кестесін жаңарту)
+        // XP есептеу: мысалы, әр пайыз үшін 10 ұпай
+        const xpGained = score * 10;
+
+        await pool.query(
+            `INSERT INTO leaderboard (user_id, total_xp, quizzes_passed, average_score) 
+             VALUES ($1, $2, 1, $3)
+             ON CONFLICT (user_id) 
+             DO UPDATE SET 
+                total_xp = leaderboard.total_xp + EXCLUDED.total_xp,
+                quizzes_passed = leaderboard.quizzes_passed + 1,
+                average_score = (leaderboard.average_score * leaderboard.quizzes_passed + EXCLUDED.average_score) / (leaderboard.quizzes_passed + 1),
+                last_updated = CURRENT_TIMESTAMP`,
+            [userId, xpGained, score]
+        );
+
+        res.json(newResult.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: "Нәтижені сақтау немесе рейтингті жаңарту қатесі" });
+    }
+});
+
+// LocalStorage деректерін автоматты синхрондау маршруты
+app.post('/api/auto-sync', async (req, res) => {
+    const { results } = req.body;
+
+    try {
+        for (const item of results) {
+            // 1. Мәндердің NaN емес екеніне көз жеткіземіз (Санға айналдыру және тексеру)
+            // Number() арқылы санға айналдырамыз, егер қате болса || 0 қоямыз
+            const score = Number(item.bestScore || item.score) || 0;
+            const tests = Number(item.tests) || 1;
+            const avgScore = Number(item.avgScore || item.score) || 0;
+            const xpGained = score * 10;
+
+            // 2. Пайдаланушыны users кестесіне қосу немесе ID-ін алу
+            let userRes = await pool.query(
+                'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) ON CONFLICT (username) DO UPDATE SET username = EXCLUDED.username RETURNING id',
+                [item.username, `${item.username}@mail.com`, '123456']
+            );
+            const userId = userRes.rows[0].id;
+
+            // 3. Leaderboard кестесіне деректерді жазу
+            // Енді NaN мәні ешқашан бармайды, тек нақты сандар барады
+            await pool.query(
+                `INSERT INTO leaderboard (user_id, total_xp, quizzes_passed, average_score) 
+                 VALUES ($1, $2, $3, $4)
+                 ON CONFLICT (user_id) 
+                 DO UPDATE SET 
+                    total_xp = GREATEST(leaderboard.total_xp, EXCLUDED.total_xp),
+                    quizzes_passed = GREATEST(leaderboard.quizzes_passed, EXCLUDED.quizzes_passed),
+                    average_score = GREATEST(leaderboard.average_score, EXCLUDED.average_score)`,
+                [userId, xpGained, tests, avgScore]
+            );
+        }
+        res.json({ success: true });
+    } catch (err) {
+        console.error("Синхрондау қатесі:", err.message);
+        res.status(500).json({ error: "Авто-синхрондау қатесі" });
+    }
+});

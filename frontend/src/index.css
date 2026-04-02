@@ -39,6 +39,18 @@
   --transition-slow: all 0.3s ease;
 }
 
+/* БАРЛЫҚ ЭЛЕМЕНТТЕР ҮШІН ҒАЛАМДЫҚ БАПТАУ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden; /* Экранның оң жаққа қарай тасып кетуін (көлденең скролл) толығымен бұғаттайды */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:var(--font);background:var(--bg-page);color:var(--text-primary);line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
@@ -656,5 +668,100 @@ html.dark-mode .welcome-banner {
 
   .podium-gold {
     transform: none;
+  }
+}
+/* =========================================================
+   МОБИЛЬДІ АДАПТИВТІЛІК (МЕДИА СҰРАНЫСТАР)
+   ПМ04 Критерийі: Барлық құрылғыларда тамаша көрінуі тиіс
+========================================================= */
+
+/* Планшеттер мен кіші ноутбуктер үшін (1024px-ке дейін) */
+@media (max-width: 1024px) {
+  .dash-layout, 
+  .q-layout {
+    grid-template-columns: 1fr !important; /* 2 бағанды 1 бағанға айналдыру */
+    gap: 1.5rem;
+  }
+  
+  .q-top {
+    flex-direction: column !important;
+    height: auto !important;
+    padding: 1rem !important;
+    gap: 1rem;
+    text-align: center;
+  }
+}
+
+/* Ұялы телефондар үшін (768px-ке дейін) */
+@media (max-width: 768px) {
+  /* 1. Авторизация (Login/Register) беттері */
+  .auth-container {
+    flex-direction: column !important;
+  }
+  .auth-right {
+    display: none !important; /* Телефонда оң жақтағы суретті жасырамыз, тек форма қалады */
+  }
+  .auth-left {
+    width: 100% !important;
+    padding: 2rem 1rem !important;
+  }
+
+  /* 2. Басты бет (Dashboard) */
+  .dash-layout {
+    padding: 0 1rem !important;
+    margin: 1rem auto !important;
+  }
+  .main-banner {
+    flex-direction: column !important;
+    text-align: center !important;
+    padding: 1.5rem !important;
+    gap: 1.5rem;
+  }
+  .main-banner > div:last-child {
+    width: 100%;
+    justify-content: center;
+  }
+  .banner-stat-box {
+    flex: 1;
+  }
+
+  /* 3. Тест өту беті (Quiz) */
+  .q-layout {
+    padding: 0 1rem !important;
+    margin: 1rem auto !important;
+  }
+  .q-main {
+    padding: 1.5rem !important;
+  }
+  .opt-item {
+    padding: 1rem !important;
+    font-size: 0.95rem !important;
+  }
+
+  /* 4. Кестелер (Рейтинг, Нәтижелер, Админ панель) */
+  .table-container, 
+  .results-table-container,
+  .table-scroll {
+    overflow-x: auto !important; /* Телефонда кестелерді оңға-солға жылжытуға (scroll) мүмкіндік береді */
+  }
+  
+  .lead-layout,
+  .admin-layout {
+    padding: 0 1rem !important;
+  }
+
+  .podium-wrap {
+    transform: scale(0.85); /* Телефонда подиум сыймай қалмауы үшін кішірейтеміз */
+    margin: 1.5rem 0 !important;
+  }
+}
+
+/* Өте кішкентай телефондар үшін (480px-ке дейін) */
+@media (max-width: 480px) {
+  .q-nav-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  h1 {
+    font-size: 1.75rem !important;
   }
 }

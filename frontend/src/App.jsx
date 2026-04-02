@@ -6,6 +6,7 @@ import Quiz from './pages/Quiz';
 import Results from './pages/Results';
 import Leaderboard from './pages/Leaderboard'; // Рейтингті қостық
 import Profile from './pages/Profile';         // Профильді қостық
+import AdminPanel from './pages/AdminPanel';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/results" element={<Results />} />
         <Route path="/leaderboard" element={<Leaderboard />} /> {/* Рейтинг жолы */}
         <Route path="/profile" element={<Profile />} />         {/* Профиль жолы */}
+        <Route path="/admin" element={<AdminPanel />} />
       </Routes>
     </Router>
   );

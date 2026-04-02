@@ -62,7 +62,6 @@ const Profile = () => {
       <Navbar />
       
       <style>{`
-        /* ТЕК АЙНЫМАЛЫЛАР ҚОЛДАНЫЛДЫ - DARK MODE ҮШІН */
         .profile-layout { max-width: 1200px; margin: 2.5rem auto; padding: 0 2rem; display: grid; grid-template-columns: 380px 1fr; gap: 2.5rem; }
         
         .animate-fade-in { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(15px); }
@@ -72,7 +71,6 @@ const Profile = () => {
         .widget { background: var(--bg-card); border-radius: 24px; border: 1px solid var(--border); padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); margin-bottom: 2rem; }
         
         .p-avatar-wrap { display: flex; justify-content: center; position: relative; margin-top: -60px; margin-bottom: 1rem; z-index: 10; }
-        /* Аватарканың сыртқы жиегі де Dark Mode-та дұрыс тұруы үшін var(--bg-card) қолданылды */
         .p-avatar { width: 110px; height: 110px; border-radius: 50%; background: linear-gradient(135deg, #4f46e5, #8b5cf6); color: white; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; font-weight: 800; border: 6px solid var(--bg-card); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border); }
@@ -80,6 +78,7 @@ const Profile = () => {
         .stat-val { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; }
         .stat-lbl { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
 
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
         .input-grp { margin-bottom: 1.5rem; }
         .input-lbl { display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
         .input-fld { width: 100%; padding: 12px 16px; border: 1px solid var(--border); background: var(--bg-input); border-radius: 12px; font-size: 0.95rem; color: var(--text-primary); transition: 0.2s; outline: none; box-sizing: border-box; }
@@ -87,6 +86,18 @@ const Profile = () => {
         
         .btn-blue { background: var(--primary); color: white; border: none; padding: 14px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 1rem; }
         .btn-blue:hover { filter: brightness(1.1); }
+
+        /* МОБИЛЬДІ АДАПТИВТІЛІК */
+        @media (max-width: 992px) {
+          .profile-layout { grid-template-columns: 1fr; padding: 0 1.5rem; }
+        }
+        @media (max-width: 768px) {
+          .profile-layout { padding: 0 1rem; margin: 1.5rem auto; }
+          .form-grid { grid-template-columns: 1fr; gap: 0; }
+          .p-avatar { width: 90px; height: 90px; font-size: 2.5rem; margin-top: -45px; }
+          .stat-val { font-size: 1.25rem; }
+          .widget { padding: 1.5rem; }
+        }
       `}</style>
 
       <div className="profile-layout">
@@ -148,7 +159,7 @@ const Profile = () => {
             <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>Профильді өңдеу</h2>
             
             <form onSubmit={handleUpdateProfile}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+              <div className="form-grid">
                 <div className="input-grp">
                   <label className="input-lbl">Пайдаланушы аты</label>
                   <input 
@@ -208,7 +219,7 @@ const Profile = () => {
                   else if (r.score >= 50) { badgeBg = 'var(--warning-light)'; badgeColor = 'var(--warning)'; }
 
                   return (
-                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--bg-input)', borderRadius: '16px', border: '1px solid var(--border)' }}>
+                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--bg-input)', borderRadius: '16px', border: '1px solid var(--border)', flexWrap: 'wrap', gap: '10px' }}>
                       <div>
                         <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '4px' }}>{r.quiz_title || r.quizTitle || 'Тест'}</div>
                         <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{new Date(r.date).toLocaleString('kk-KZ')}</div>

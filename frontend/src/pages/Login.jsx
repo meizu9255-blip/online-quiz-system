@@ -9,6 +9,14 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false); // Көз функциясы
+  
+  // "Есте сақта" галочкасы үшін жаңа стейт
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Құпия сөзді қалпына келтіру үшін жаңа стейттер
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotStatus, setForgotStatus] = useState(''); // 'loading', 'success', ''
 
   // Popup-тан келетін хабарламаны тыңдау (Google/GitHub кіргенде)
   useEffect(() => {
@@ -29,7 +37,11 @@ const Login = () => {
     
     try {
       const response = await axios.post('http://localhost:5000/api/login', { email, password });
+      
+      // Егер "есте сақта" басылса localStorage (ұзақ), басылмаса sessionStorage (браузер жабылғанша) сақтауға болады.
+      // Қазіргі жоба логикасы бойынша localStorage-та қалдырамыз:
       localStorage.setItem('currentUser', response.data.username);
+      
       navigate('/dashboard');
     } catch (error) {
       if (error.response) setErrorMsg(error.response.data.error);
@@ -37,6 +49,23 @@ const Login = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Құпия сөзді қалпына келтіру симуляциясы
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+    setForgotStatus('loading');
+    
+    // Бэкендке сұраныс жібергендей 1.5 секунд күтеміз
+    setTimeout(() => {
+      setForgotStatus('success');
+      // 2 секундтан соң терезені жабамыз
+      setTimeout(() => {
+        setShowForgotModal(false);
+        setForgotStatus('');
+        setForgotEmail('');
+      }, 2000);
+    }, 1500);
   };
 
   // 100% Шынайы көрінетін Google/GitHub авторизация терезесі
@@ -137,31 +166,39 @@ const Login = () => {
               <input type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
 
-            <div className="form-group" style={{ position: 'relative' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <label>Құпия сөз</label>
-                <Link to="#" style={{ fontSize: '0.75rem', color: 'var(--primary)' }}>Құпия сөзді ұмыттыңыз ба?</Link>
+            <div className="form-group">
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <label style={{ margin: 0 }}>Құпия сөз</label>
+                <span onClick={() => setShowForgotModal(true)} style={{ fontSize: '0.75rem', color: 'var(--primary)', cursor: 'pointer', fontWeight: 600 }}>Құпия сөзді ұмыттыңыз ба?</span>
               </div>
-              <input 
-                type={showPassword ? "text" : "password"} 
-                placeholder="••••••••" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-                style={{ paddingRight: '40px', letterSpacing: showPassword ? 'normal' : '2px' }} 
-                required 
-              />
-              {/* Көз Иконкасы */}
-              <div onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '32px', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', height: '36px' }}>
-                {showPassword ? (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                )}
+              
+              {/* Input пен Иконканы бөлек контейнерге саламыз */}
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  placeholder="••••••••" 
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)} 
+                  style={{ width: '100%', padding: '12px 40px 12px 16px', letterSpacing: showPassword ? 'normal' : '2px', boxSizing: 'border-box' }} 
+                  required 
+                />
+                <div onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {showPassword ? (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  )}
+                </div>
               </div>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', gap: '8px' }}>
-              <input type="checkbox" id="remember" />
+              <input 
+                type="checkbox" 
+                id="remember" 
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
               <label htmlFor="remember" style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>30 күн бойы есте сақта</label>
             </div>
 
@@ -201,6 +238,47 @@ const Login = () => {
           </div>
         </div>
       </div>
+
+      {/* ҚҰПИЯ СӨЗДІ ҚАЛПЫНА КЕЛТІРУ МОДАЛЬДЫ ТЕРЕЗЕСІ */}
+      {showForgotModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
+          <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: '16px', width: '100%', maxWidth: '400px', border: '1px solid var(--border)', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', position: 'relative' }}>
+            
+            <button onClick={() => setShowForgotModal(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-muted)' }}>×</button>
+            
+            {forgotStatus === 'success' ? (
+              <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+                <div style={{ width: '60px', height: '60px', background: 'var(--success-light)', color: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', margin: '0 auto 1rem' }}>✓</div>
+                <h3 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Хат жіберілді!</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5 }}>
+                  <b>{forgotEmail}</b> мекенжайына құпия сөзді қалпына келтіру сілтемесі жіберілді. Поштаңызды тексеріңіз.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleForgotPassword}>
+                <h3 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Құпия сөзді ұмыттыңыз ба?</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+                  Тіркелген электрондық поштаңызды жазыңыз. Біз сізге құпия сөзді өзгерту сілтемесін жібереміз.
+                </p>
+                <div className="form-group">
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>Электрондық пошта</label>
+                  <input 
+                    type="email" 
+                    placeholder="you@example.com" 
+                    value={forgotEmail} 
+                    onChange={(e) => setForgotEmail(e.target.value)} 
+                    required 
+                    style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-input)', color: 'var(--text-primary)', outline: 'none' }}
+                  />
+                </div>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '12px', borderRadius: '12px', marginTop: '1rem', border: 'none', fontWeight: 600, cursor: 'pointer' }} disabled={forgotStatus === 'loading'}>
+                  {forgotStatus === 'loading' ? 'Жіберілуде...' : 'Қалпына келтіру'}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

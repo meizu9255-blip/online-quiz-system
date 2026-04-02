@@ -53,10 +53,10 @@ const Results = () => {
 
   if (loading) {
     return (
-      <>
+      <div style={{ background: 'var(--bg-page)', minHeight: '100vh' }}>
         <Navbar />
-        <main className="main-content" style={{textAlign: 'center', padding: '3rem'}}>Жүктелуде...</main>
-      </>
+        <main className="main-content" style={{textAlign: 'center', padding: '3rem', color: 'var(--text-primary)'}}>Жүктелуде...</main>
+      </div>
     );
   }
 
@@ -65,10 +65,28 @@ const Results = () => {
     const answersData = typeof r.answers === 'string' ? JSON.parse(r.answers) : r.answers;
 
     return (
-      <>
+      <div style={{ background: 'var(--bg-page)', minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
         <Navbar />
-        <main className="main-content">
-          <div className="result-card" style={{ background: 'var(--bg-card)', padding: '3rem', borderRadius: '16px', border: '1px solid var(--border)' }}>
+        
+        <style>{`
+          .res-container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+          .res-card { background: var(--bg-card); padding: 3rem; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+          .stats-row { display: flex; justify-content: center; gap: 4rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 2rem 0; margin: 2rem 0; }
+          .action-btns { margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; }
+          
+          /* МОБИЛЬДІ АДАПТИВТІЛІК */
+          @media (max-width: 768px) {
+            .res-container { padding: 1rem; }
+            .res-card { padding: 1.5rem; }
+            .stats-row { gap: 1.5rem; flex-wrap: wrap; padding: 1.5rem 0; }
+            .stats-row > div { width: 40%; } /* Телефонда 2 қатармен тұрады */
+            .action-btns { flex-direction: column; }
+            .action-btns a, .action-btns button { width: 100%; text-align: center; }
+          }
+        `}</style>
+
+        <main className="main-content res-container">
+          <div className="res-card">
             <div style={{ color: getBadgeStyle(r.score).color, fontSize: '5rem', fontWeight: 800, textAlign: 'center', lineHeight: 1 }}>
               {r.score}%
             </div>
@@ -76,64 +94,105 @@ const Results = () => {
               {r.score >= 90 ? 'Тамаша нәтиже! Сіз керемет білім көрсеттіңіз!' : (r.score >= 70 ? 'Жақсы нәтиже!' : 'Тағы тырысып көріңіз!')}
             </p>
 
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '4rem', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '2rem 0', margin: '2rem 0' }}>
-              <div style={{textAlign:'center'}}><div style={{color: '#10B981', fontSize: '1.75rem', fontWeight: 700}}>{r.correct_count}</div><div style={{fontSize: '0.75rem', color: 'var(--text-muted)'}}>ДҰРЫС</div></div>
-              <div style={{textAlign:'center'}}><div style={{color: '#EF4444', fontSize: '1.75rem', fontWeight: 700}}>{r.total_questions - r.correct_count}</div><div style={{fontSize: '0.75rem', color: 'var(--text-muted)'}}>ҚАТЕ</div></div>
-              <div style={{textAlign:'center'}}><div style={{color: '#3B82F6', fontSize: '1.75rem', fontWeight: 700}}>{r.total_questions}</div><div style={{fontSize: '0.75rem', color: 'var(--text-muted)'}}>БАРЛЫҒЫ</div></div>
-              <div style={{textAlign:'center'}}><div style={{color: '#F59E0B', fontSize: '1.75rem', fontWeight: 700}}>{formatTime(r.time_spent)}</div><div style={{fontSize: '0.75rem', color: 'var(--text-muted)'}}>УАҚЫТ</div></div>
+            <div className="stats-row">
+              <div style={{textAlign:'center'}}><div style={{color: '#10B981', fontSize: '1.75rem', fontWeight: 700}}>{r.correct_count}</div><div style={{fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px'}}>ДҰРЫС</div></div>
+              <div style={{textAlign:'center'}}><div style={{color: '#EF4444', fontSize: '1.75rem', fontWeight: 700}}>{r.total_questions - r.correct_count}</div><div style={{fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px'}}>ҚАТЕ</div></div>
+              <div style={{textAlign:'center'}}><div style={{color: '#3B82F6', fontSize: '1.75rem', fontWeight: 700}}>{r.total_questions}</div><div style={{fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px'}}>БАРЛЫҒЫ</div></div>
+              <div style={{textAlign:'center'}}><div style={{color: '#F59E0B', fontSize: '1.75rem', fontWeight: 700}}>{formatTime(r.time_spent)}</div><div style={{fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px'}}>УАҚЫТ</div></div>
             </div>
 
             <div style={{ textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
               Тест: {r.quiz_title} | Күні: {formatDate(r.date)} | Пайдаланушы: {r.username}
             </div>
 
-            <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-              <Link to="/results" className="btn btn-outline">Басты бет</Link>
-              <Link to={`/quiz/${r.quiz_id}`} className="btn btn-primary">Қайта тапсыру</Link>
-              <button className="btn btn-success" onClick={() => window.print()}>Баспаға шығару</button>
+            <div className="action-btns">
+              <Link to="/results" style={{ padding: '12px 24px', borderRadius: '8px', border: '1px solid var(--border)', color: 'var(--text-primary)', textDecoration: 'none', fontWeight: 600, background: 'var(--bg-page)' }}>Басты бет</Link>
+              <Link to={`/quiz/${r.quiz_id}`} style={{ padding: '12px 24px', borderRadius: '8px', background: 'var(--primary)', color: 'white', textDecoration: 'none', fontWeight: 600 }}>Қайта тапсыру</Link>
+              <button style={{ padding: '12px 24px', borderRadius: '8px', background: '#10b981', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 600 }} onClick={() => window.print()}>Баспаға шығару</button>
             </div>
           </div>
 
-          <div style={{ marginTop: '3rem', marginBottom: '1.5rem', fontSize: '1.25rem', fontWeight: 700 }}>Жауаптарды қарау</div>
+          <div style={{ marginTop: '3rem', marginBottom: '1.5rem', fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>Жауаптарды қарау</div>
           
-          {answersData && answersData.map((ans, idx) => (
-            <div key={idx} style={{ marginBottom: '1.5rem', background: 'var(--bg-card)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-              <div style={{ marginBottom: '1rem', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)' }}>
-                СҰРАҚ {idx + 1} <span style={{ color: ans.isCorrect ? '#10B981' : '#EF4444', marginLeft: '12px' }}>{ans.isCorrect ? 'ДҰРЫС' : 'ҚАТЕ'}</span>
-              </div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1.5rem' }}>{ans.question}</div>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {ans.options.map((opt, oIdx) => {
-                  const isUser = ans.userAnswer === oIdx;
-                  const isCorrect = ans.correctAnswer === oIdx;
-                  
-                  let border = '1px solid var(--border)';
-                  let bg = 'transparent';
-                  let label = '';
-                  let textColor = 'var(--text-primary)';
+          {answersData && answersData.map((ans, idx) => {
+            // 1. БАЗАДАН КЕЛГЕН ЖАУАПТЫ ТҮЗЕТУ ЛОГИКАСЫ (ИНДЕКСТІ МӘТІНГЕ АЙНАЛДЫРУ)
+            let correctText = ans.correctAnswer;
+            if (!isNaN(correctText) && String(correctText).trim() !== '' && Number(correctText) >= 0 && Number(correctText) < ans.options.length) {
+              correctText = ans.options[Number(correctText)];
+            }
 
-                  if (isCorrect) { 
-                    border = '1px solid #10B981'; bg = 'rgba(16, 185, 129, 0.05)'; label = 'Дұрыс жауап'; textColor = '#10B981';
-                  } else if (isUser && !ans.isCorrect) { 
-                    border = '1px solid #EF4444'; bg = 'rgba(239, 68, 68, 0.05)'; label = 'Сіздің жауап'; textColor = '#EF4444';
-                  }
+            let userText = ans.userAnswer;
+            if (!isNaN(userText) && String(userText).trim() !== '' && Number(userText) >= 0 && Number(userText) < ans.options.length) {
+              userText = ans.options[Number(userText)];
+            }
 
-                  return (
-                    <div key={oIdx} style={{ display: 'flex', alignItems: 'center', padding: '12px 16px', borderRadius: '8px', border: border, background: bg }}>
-                      <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: isCorrect ? '#10B981' : (isUser ? '#EF4444' : 'var(--bg-page)'), color: (isCorrect || isUser) ? '#fff' : 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '16px', fontWeight: 700, fontSize: '0.85rem' }}>
-                        {String.fromCharCode(65 + oIdx)}
+            // Шынайы дұрыстығын тексеру
+            const isTrulyCorrect = String(userText).trim() === String(correctText).trim();
+
+            const correctIndex = ans.options.findIndex(opt => String(opt).trim() === String(correctText).trim());
+            const correctLetter = correctIndex !== -1 ? String.fromCharCode(65 + correctIndex) : '';
+
+            return (
+              <div key={idx} style={{ marginBottom: '1.5rem', background: 'var(--bg-card)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+                <div style={{ marginBottom: '1rem', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                  СҰРАҚ {idx + 1} <span style={{ color: isTrulyCorrect ? '#10B981' : '#EF4444', marginLeft: '12px' }}>{isTrulyCorrect ? 'ДҰРЫС' : 'ҚАТЕ'}</span>
+                </div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1.5rem', color: 'var(--text-primary)' }}>{ans.question}</div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {ans.options.map((opt, oIdx) => {
+                    const isUserSelected = String(userText).trim() === String(opt).trim();
+                    const isActuallyCorrect = String(correctText).trim() === String(opt).trim();
+                    
+                    let border = '1px solid var(--border)';
+                    let bg = 'transparent';
+                    let textColor = 'var(--text-primary)';
+                    let circleBg = 'var(--bg-page)';
+                    let circleColor = 'var(--text-secondary)';
+
+                    if (isUserSelected) { 
+                      if (isActuallyCorrect) {
+                        border = '1px solid #10B981'; bg = 'rgba(16, 185, 129, 0.05)'; textColor = '#10B981'; circleBg = '#10B981'; circleColor = 'white';
+                      } else {
+                        border = '1px solid #EF4444'; bg = 'rgba(239, 68, 68, 0.05)'; textColor = '#EF4444'; circleBg = '#EF4444'; circleColor = 'white';
+                      }
+                    } else if (isActuallyCorrect) {
+                      border = '1px solid #10B981'; bg = 'transparent'; textColor = '#10B981'; circleBg = 'transparent'; circleColor = '#10B981';
+                    }
+
+                    return (
+                      <div key={oIdx} style={{ display: 'flex', alignItems: 'center', padding: '12px 16px', borderRadius: '8px', border: border, background: bg }}>
+                        <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: circleBg, color: circleColor, border: isActuallyCorrect && !isUserSelected ? '1px solid #10B981' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '16px', fontWeight: 700, fontSize: '0.85rem', flexShrink: 0 }}>
+                          {String.fromCharCode(65 + oIdx)}
+                        </div>
+                        <div style={{ fontSize: '0.95rem', fontWeight: 500, color: textColor }}>{opt}</div>
+                        
+                        {isUserSelected && (
+                          <div style={{ marginLeft: 'auto', fontSize: '1.2rem', color: textColor, fontWeight: 800 }}>
+                            {isActuallyCorrect ? '✓' : '✗'}
+                          </div>
+                        )}
                       </div>
-                      <div style={{ fontSize: '0.95rem', fontWeight: 500, color: 'var(--text-primary)' }}>{opt}</div>
-                      {label && <span style={{ marginLeft: 'auto', fontSize: '0.75rem', fontWeight: 600, color: textColor }}>{label}</span>}
+                    );
+                  })}
+                </div>
+
+                {!isTrulyCorrect && (
+                  <div style={{ marginTop: '1.5rem', padding: '16px', background: 'rgba(16, 185, 129, 0.05)', borderLeft: '4px solid #10b981', borderRadius: '0 8px 8px 0', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                    <span style={{ fontSize: '1.5rem', lineHeight: 1 }}>💡</span>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#10b981', textTransform: 'uppercase', marginBottom: '4px', letterSpacing: '0.5px' }}>Дұрыс жауап:</div>
+                      <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                        {correctLetter ? `${correctLetter}) ` : ''}{correctText}
+                      </div>
                     </div>
-                  );
-                })}
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </main>
-      </>
+      </div>
     );
   }
 
@@ -141,25 +200,36 @@ const Results = () => {
   const myResults = results.filter(res => res.username === currentUser);
 
   return (
-    <>
+    <div style={{ background: 'var(--bg-page)', minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
       <Navbar />
-      <main className="main-content">
-        <div style={{marginBottom: '2rem'}}>
-          <h1 style={{fontSize: '1.75rem', marginBottom: '0.5rem'}}>Менің нәтижелерім</h1>
-          <p style={{color: 'var(--text-muted)'}}>Барлық тапсырылған тесттер тарихы</p>
+      <style>{`
+        .table-container { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+        .res-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        .res-table th { padding: 1.25rem 1.5rem; background: var(--bg-page); border-bottom: 1px solid var(--border); text-align: left; font-size: 0.75rem; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+        .res-table td { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); }
+        
+        @media (max-width: 768px) {
+          .main-content { padding: 1rem !important; }
+        }
+      `}</style>
+
+      <main className="main-content" style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
+        <div style={{marginBottom: '1.5rem'}}>
+          <h1 style={{fontSize: '1.75rem', marginBottom: '0.5rem', color: 'var(--text-primary)'}}>Менің нәтижелерім</h1>
+          <p style={{color: 'var(--text-muted)', margin: 0}}>Барлық тапсырылған тесттер тарихы</p>
         </div>
         
-        <div className="results-table-container" style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border)', overflow: 'hidden' }}>
-          <table className="results-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--border)', textAlign: 'left', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '1px' }}>
+        <div className="table-container">
+          <table className="res-table">
+            <thead>
               <tr>
-                <th style={{padding: '1.25rem 1.5rem'}}>NO</th>
-                <th style={{padding: '1.25rem 1.5rem'}}>ТЕСТ</th>
-                <th style={{padding: '1.25rem 1.5rem'}}>БАЛЛ</th>
-                <th style={{padding: '1.25rem 1.5rem'}}>ДҰРЫС</th>
-                <th style={{padding: '1.25rem 1.5rem'}}>УАҚЫТ</th>
-                <th style={{padding: '1.25rem 1.5rem'}}>КҮНІ</th>
-                <th style={{padding: '1.25rem 1.5rem'}}>ӘРЕКЕТ</th>
+                <th>NO</th>
+                <th>ТЕСТ</th>
+                <th>БАЛЛ</th>
+                <th>ДҰРЫС</th>
+                <th>УАҚЫТ</th>
+                <th>КҮНІ</th>
+                <th>ӘРЕКЕТ</th>
               </tr>
             </thead>
             <tbody>
@@ -167,31 +237,31 @@ const Results = () => {
                 myResults.map((res, index) => {
                   const style = getBadgeStyle(res.score);
                   return (
-                    <tr key={res.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                      <td style={{padding: '1.25rem 1.5rem', fontWeight: 600}}>{index + 1}</td>
-                      <td style={{padding: '1.25rem 1.5rem', fontWeight: 600}}>{res.quiz_title}</td>
-                      <td style={{padding: '1.25rem 1.5rem'}}>
-                        <span style={{ background: style.bg, color: style.color, padding: '4px 10px', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem' }}>
+                    <tr key={res.id}>
+                      <td style={{fontWeight: 600, color: 'var(--text-secondary)'}}>{index + 1}</td>
+                      <td style={{fontWeight: 600, color: 'var(--text-primary)'}}>{res.quiz_title}</td>
+                      <td>
+                        <span style={{ background: style.bg, color: style.color, padding: '6px 12px', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem' }}>
                           {res.score}%
                         </span>
                       </td>
-                      <td style={{padding: '1.25rem 1.5rem', color: 'var(--text-secondary)'}}>{res.correct_count} / {res.total_questions}</td>
-                      <td style={{padding: '1.25rem 1.5rem', color: 'var(--text-secondary)'}}>{formatTime(res.time_spent)}</td>
-                      <td style={{padding: '1.25rem 1.5rem', color: 'var(--text-secondary)'}}>{formatDate(res.date)}</td>
-                      <td style={{padding: '1.25rem 1.5rem'}}>
-                        <Link to={`/results?id=${res.id}`} className="btn btn-outline" style={{ padding: '6px 16px', fontSize: '0.8rem', borderRadius: '6px' }}>Қарау</Link>
+                      <td style={{color: 'var(--text-secondary)', fontWeight: 500}}>{res.correct_count} / {res.total_questions}</td>
+                      <td style={{color: 'var(--text-secondary)', fontWeight: 500}}>{formatTime(res.time_spent)}</td>
+                      <td style={{color: 'var(--text-secondary)', fontWeight: 500}}>{formatDate(res.date)}</td>
+                      <td>
+                        <Link to={`/results?id=${res.id}`} style={{ padding: '8px 16px', fontSize: '0.85rem', borderRadius: '8px', border: '1px solid var(--border)', color: 'var(--primary)', textDecoration: 'none', fontWeight: 600, background: 'var(--bg-page)', cursor: 'pointer', whiteSpace: 'nowrap' }}>Қарау</Link>
                       </td>
                     </tr>
                   )
                 })
               ) : (
-                <tr><td colSpan="7" style={{textAlign: 'center', padding: '3rem', color: 'var(--text-muted)'}}>Әлі тест тапсырмағансыз</td></tr>
+                <tr><td colSpan="7" style={{textAlign: 'center', padding: '4rem', color: 'var(--text-muted)', fontWeight: 500}}>Әлі тест тапсырмағансыз</td></tr>
               )}
             </tbody>
           </table>
         </div>
       </main>
-    </>
+    </div>
   );
 };
 

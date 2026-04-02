@@ -6,11 +6,10 @@ const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Жадтан қазіргі пайдаланушыны аламыз
   const currentUser = localStorage.getItem('currentUser') || 'Қонақ';
 
   useEffect(() => {
-    const fetchAllResults = async () => {
+    const fetchAndSync = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/results');
         const allResults = response.data;
@@ -33,17 +32,25 @@ const Leaderboard = () => {
 
         processedUsers.sort((a, b) => {
           if (b.bestScore !== a.bestScore) return b.bestScore - a.bestScore;
-          return b.avgScore - a.avgScore; 
+          if (b.avgScore !== a.avgScore) return b.avgScore - a.avgScore; 
+          return a.username.localeCompare(b.username); 
         });
+
+        // === АВТОМАТТЫ СИНХРОНДАУ БӨЛІМІ ===
+        // Есептелген деректерді PostgreSQL-дегі leaderboard кестесіне үнсіз жіберу
+        if (processedUsers.length > 0) {
+            await axios.post('http://localhost:5000/api/auto-sync', { results: processedUsers });
+        }
+        // =================================
 
         setLeaderboardData(processedUsers);
       } catch (error) {
-        console.error("Рейтингті алу кезінде қате кетті:", error);
+        console.error("Рейтингті алу немесе синхрондау кезінде қате кетті:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchAllResults();
+    fetchAndSync();
   }, []);
 
   const topThree = leaderboardData.slice(0, 3);
@@ -81,8 +88,8 @@ const Leaderboard = () => {
           display: flex; 
           flex-direction: column; 
           align-items: center; 
-          justify-content: flex-end; /* Бәрін төменге ығыстырамыз */
-          padding: 0 1rem 1.5rem 1rem; /* Тек астына padding береміз */
+          justify-content: flex-end;
+          padding: 0 1rem 1.5rem 1rem;
         }
         
         .p-gold { border-color: #f59e0b; z-index: 2; height: 250px; background: linear-gradient(to bottom, var(--bg-card) 50%, rgba(245,158,11,0.08)); }
@@ -100,7 +107,7 @@ const Leaderboard = () => {
         .p-silver .p-rank { background: linear-gradient(135deg, #94a3b8, #cbd5e1); }
         .p-bronze .p-rank { background: linear-gradient(135deg, #d97706, #b45309); }
         
-        .p-avatar { width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .p-avatar { width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0; }
         .p-gold .p-avatar { width: 74px; height: 74px; font-size: 2.2rem; margin-bottom: 1rem; }
         
         .p-name { font-weight: 800; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -112,9 +119,9 @@ const Leaderboard = () => {
         .p-lbl { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* КЕСТЕ */
-        .t-container { background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
-        .table-scroll { max-height: 500px; overflow-y: auto; border-radius: 0 0 20px 20px; }
-        .table-scroll::-webkit-scrollbar { width: 8px; }
+        .t-container { background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow-x: auto; }
+        .table-scroll { max-height: 500px; overflow-y: auto; border-radius: 0 0 20px 20px; min-width: 500px; }
+        .table-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
         .table-scroll::-webkit-scrollbar-track { background: var(--bg-page); }
         .table-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
         
@@ -125,8 +132,24 @@ const Leaderboard = () => {
         .lead-table tr:hover td { background: rgba(148, 163, 184, 0.05); }
         
         .t-rank { width: 34px; height: 34px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; background: var(--bg-page); color: var(--text-secondary); }
-        .t-mini-av { width: 32px; height: 32px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; }
+        .t-mini-av { width: 32px; height: 32px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; flex-shrink: 0; }
         .score-badge { background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.9rem; }
+
+        @media (max-width: 768px) {
+          .lead-layout { padding: 0 1rem; margin: 1.5rem auto; }
+          .podium-wrap { height: auto; gap: 0.5rem; margin: 2rem 0; align-items: flex-end; }
+          .p-card { width: 32%; padding: 0 0.5rem 1rem 0.5rem; min-width: 0; }
+          .p-gold { height: 210px; }
+          .p-silver { height: 170px; }
+          .p-bronze { height: 150px; }
+          .p-avatar { width: 45px; height: 45px; font-size: 1.2rem; }
+          .p-gold .p-avatar { width: 55px; height: 55px; font-size: 1.5rem; }
+          .p-name { font-size: 0.9rem; }
+          .p-gold .p-name { font-size: 1rem; }
+          .p-score { font-size: 1.2rem; }
+          .p-gold .p-score { font-size: 1.5rem; }
+          .lead-table th, .lead-table td { padding: 1rem 0.75rem; }
+        }
       `}</style>
 
       <div className="lead-layout">
@@ -144,7 +167,6 @@ const Leaderboard = () => {
           </div>
         ) : (
           <>
-            {/* ТОП-3 ПОДИУМ */}
             <div className="podium-wrap animate-fade-in delay-1">
               {topThree[1] && (
                 <div className="p-card p-silver">
@@ -183,16 +205,15 @@ const Leaderboard = () => {
               )}
             </div>
 
-            {/* БАРЛЫҚ ҚАТЫСУШЫЛАР КЕСТЕСІ (1-ден 100-ге дейін сыяды) */}
             <div className="t-container animate-fade-in delay-2">
               <div className="table-scroll">
                 <table className="lead-table">
                   <thead>
                     <tr>
-                      <th style={{ width: '80px', textAlign: 'center' }}>Орын</th>
+                      <th style={{ width: '60px', textAlign: 'center' }}>Орын</th>
                       <th>Пайдаланушы</th>
-                      <th style={{ textAlign: 'center' }}>Тесттер саны</th>
-                      <th style={{ textAlign: 'center' }}>Орташа балл</th>
+                      <th style={{ textAlign: 'center' }}>Тесттер</th>
+                      <th style={{ textAlign: 'center' }}>Орташа</th>
                       <th style={{ textAlign: 'center' }}>Ең жоғары</th>
                     </tr>
                   </thead>
@@ -200,7 +221,6 @@ const Leaderboard = () => {
                     {leaderboardData.map((u, index) => {
                       const isMe = u.username === currentUser;
                       
-                      // МЕДАЛЬДАР ЛОГИКАСЫ
                       let rankDisplay = index + 1;
                       let rankStyle = { background: 'var(--bg-page)', color: 'var(--text-secondary)' };
                       
