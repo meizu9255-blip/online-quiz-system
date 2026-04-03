@@ -8,9 +8,8 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // Көз функциясы
+  const [showPassword, setShowPassword] = useState(false); 
   
-  // "Есте сақта" галочкасы үшін жаңа стейт
   const [rememberMe, setRememberMe] = useState(false);
 
   // Құпия сөзді қалпына келтіру үшін жаңа стейттер
@@ -38,8 +37,6 @@ const Login = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/login', { email, password });
       
-      // Егер "есте сақта" басылса localStorage (ұзақ), басылмаса sessionStorage (браузер жабылғанша) сақтауға болады.
-      // Қазіргі жоба логикасы бойынша localStorage-та қалдырамыз:
       localStorage.setItem('currentUser', response.data.username);
       
       navigate('/dashboard');
@@ -51,15 +48,13 @@ const Login = () => {
     }
   };
 
-  // Құпия сөзді қалпына келтіру симуляциясы
+
   const handleForgotPassword = (e) => {
     e.preventDefault();
     setForgotStatus('loading');
     
-    // Бэкендке сұраныс жібергендей 1.5 секунд күтеміз
     setTimeout(() => {
       setForgotStatus('success');
-      // 2 секундтан соң терезені жабамыз
       setTimeout(() => {
         setShowForgotModal(false);
         setForgotStatus('');
@@ -68,7 +63,6 @@ const Login = () => {
     }, 1500);
   };
 
-  // 100% Шынайы көрінетін Google/GitHub авторизация терезесі
   const handleOAuthLogin = (provider) => {
     const width = 450; const height = 600;
     const left = window.innerWidth / 2 - width / 2;

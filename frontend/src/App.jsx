@@ -4,8 +4,8 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Quiz from './pages/Quiz';
 import Results from './pages/Results';
-import Leaderboard from './pages/Leaderboard'; // Рейтингті қостық
-import Profile from './pages/Profile';         // Профильді қостық
+import Leaderboard from './pages/Leaderboard'; 
+import Profile from './pages/Profile';        
 import AdminPanel from './pages/AdminPanel';
 
 function App() {

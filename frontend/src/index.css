@@ -675,11 +675,11 @@ html.dark-mode .welcome-banner {
    ПМ04 Критерийі: Барлық құрылғыларда тамаша көрінуі тиіс
 ========================================================= */
 
-/* Планшеттер мен кіші ноутбуктер үшін (1024px-ке дейін) */
+
 @media (max-width: 1024px) {
   .dash-layout, 
   .q-layout {
-    grid-template-columns: 1fr !important; /* 2 бағанды 1 бағанға айналдыру */
+    grid-template-columns: 1fr !important; 
     gap: 1.5rem;
   }
   
@@ -692,21 +692,21 @@ html.dark-mode .welcome-banner {
   }
 }
 
-/* Ұялы телефондар үшін (768px-ке дейін) */
+
 @media (max-width: 768px) {
-  /* 1. Авторизация (Login/Register) беттері */
+
   .auth-container {
     flex-direction: column !important;
   }
   .auth-right {
-    display: none !important; /* Телефонда оң жақтағы суретті жасырамыз, тек форма қалады */
+    display: none !important; 
   }
   .auth-left {
     width: 100% !important;
     padding: 2rem 1rem !important;
   }
 
-  /* 2. Басты бет (Dashboard) */
+
   .dash-layout {
     padding: 0 1rem !important;
     margin: 1rem auto !important;
@@ -725,7 +725,7 @@ html.dark-mode .welcome-banner {
     flex: 1;
   }
 
-  /* 3. Тест өту беті (Quiz) */
+
   .q-layout {
     padding: 0 1rem !important;
     margin: 1rem auto !important;
@@ -738,11 +738,11 @@ html.dark-mode .welcome-banner {
     font-size: 0.95rem !important;
   }
 
-  /* 4. Кестелер (Рейтинг, Нәтижелер, Админ панель) */
+
   .table-container, 
   .results-table-container,
   .table-scroll {
-    overflow-x: auto !important; /* Телефонда кестелерді оңға-солға жылжытуға (scroll) мүмкіндік береді */
+    overflow-x: auto !important; 
   }
   
   .lead-layout,
@@ -751,12 +751,11 @@ html.dark-mode .welcome-banner {
   }
 
   .podium-wrap {
-    transform: scale(0.85); /* Телефонда подиум сыймай қалмауы үшін кішірейтеміз */
+    transform: scale(0.85); 
     margin: 1.5rem 0 !important;
   }
 }
 
-/* Өте кішкентай телефондар үшін (480px-ке дейін) */
 @media (max-width: 480px) {
   .q-nav-grid {
     grid-template-columns: repeat(4, 1fr) !important;

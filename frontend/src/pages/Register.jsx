@@ -10,9 +10,8 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // Көз функциясы
+  const [showPassword, setShowPassword] = useState(false); 
 
-  // Popup-тан келетін хабарламаны тыңдау
   useEffect(() => {
     const handleMessage = (event) => {
       if (event.data.type === 'OAUTH_LOGIN') {
@@ -44,7 +43,6 @@ const Register = () => {
     }
   };
 
-  // Google / GitHub арқылы шынайы кіру симуляциясы
   const handleOAuthLogin = (provider) => {
     const width = 450; const height = 600;
     const left = window.innerWidth / 2 - width / 2;

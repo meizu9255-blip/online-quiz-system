@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
-const bcrypt = require('bcrypt'); // Парольді шифрлау үшін
+const bcrypt = require('bcrypt'); 
 
 const app = express();
 const PORT = 5000;
@@ -9,8 +9,8 @@ const PORT = 5000;
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'beksh_db', // Өзіңіздің база атыңыз
-    password: '1212',     // Өзіңіздің құпия сөзіңіз
+    database: 'beksh_db', 
+    password: '1212',     
     port: 5432,
 });
 
@@ -21,7 +21,7 @@ app.use(express.json());
 // 1. АВТОРИЗАЦИЯ ЖӘНЕ ТІРКЕЛУ
 // ==========================================
 
-// Тіркелу (Register)
+
 app.post('/api/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -46,7 +46,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// Кіру (Login)
+
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -101,7 +101,7 @@ app.post('/api/results', async (req, res) => {
 // 3. ТЕСТТЕРДІ БАСҚАРУ (REST API АДМИН ПАНЕЛЬ ҮШІН)
 // ==========================================
 
-// GET: Барлық тесттерді алу
+
 app.get('/api/quizzes', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM quizzes ORDER BY id ASC');
@@ -111,7 +111,7 @@ app.get('/api/quizzes', async (req, res) => {
     }
 });
 
-// POST: Жаңа тест қосу (Сұрақтарымен бірге)
+
 app.post('/api/quizzes', async (req, res) => {
     try {
         const { title, category, difficulty, questions } = req.body;
@@ -126,7 +126,7 @@ app.post('/api/quizzes', async (req, res) => {
     }
 });
 
-// PUT: Тестті өзгерту
+
 app.put('/api/quizzes/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -145,7 +145,7 @@ app.put('/api/quizzes/:id', async (req, res) => {
     }
 });
 
-// DELETE: Тестті өшіру
+
 app.delete('/api/quizzes/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -168,7 +168,7 @@ app.post('/api/results', async (req, res) => {
     try {
         const { quizId, quizTitle, score, correctCount, timeSpent, username, answers } = req.body;
 
-        // 1. Пайдаланушының ID-ін тауып аламыз (username арқылы)
+
         const userQuery = await pool.query('SELECT id FROM users WHERE username = $1', [username]);
         const userId = userQuery.rows[0]?.id;
 
@@ -176,15 +176,14 @@ app.post('/api/results', async (req, res) => {
             return res.status(404).json({ error: "Пайдаланушы табылмады" });
         }
 
-        // 2. Нәтижені Results кестесіне сақтау
+
         const newResult = await pool.query(
             `INSERT INTO results (user_id, quiz_id, quiz_title, score, correct_count, time_spent, answers) 
              VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
             [userId, quizId, quizTitle, score, correctCount, timeSpent, JSON.stringify(answers)]
         );
 
-        // 3. РЕЙТИНГТІ АВТОМАТТАНДЫРУ (Leaderboard кестесін жаңарту)
-        // XP есептеу: мысалы, әр пайыз үшін 10 ұпай
+
         const xpGained = score * 10;
 
         await pool.query(
@@ -206,28 +205,26 @@ app.post('/api/results', async (req, res) => {
     }
 });
 
-// LocalStorage деректерін автоматты синхрондау маршруты
+
 app.post('/api/auto-sync', async (req, res) => {
     const { results } = req.body;
 
     try {
         for (const item of results) {
-            // 1. Мәндердің NaN емес екеніне көз жеткіземіз (Санға айналдыру және тексеру)
-            // Number() арқылы санға айналдырамыз, егер қате болса || 0 қоямыз
+
             const score = Number(item.bestScore || item.score) || 0;
             const tests = Number(item.tests) || 1;
             const avgScore = Number(item.avgScore || item.score) || 0;
             const xpGained = score * 10;
 
-            // 2. Пайдаланушыны users кестесіне қосу немесе ID-ін алу
+            
             let userRes = await pool.query(
                 'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) ON CONFLICT (username) DO UPDATE SET username = EXCLUDED.username RETURNING id',
                 [item.username, `${item.username}@mail.com`, '123456']
             );
             const userId = userRes.rows[0].id;
 
-            // 3. Leaderboard кестесіне деректерді жазу
-            // Енді NaN мәні ешқашан бармайды, тек нақты сандар барады
+
             await pool.query(
                 `INSERT INTO leaderboard (user_id, total_xp, quizzes_passed, average_score) 
                  VALUES ($1, $2, $3, $4)

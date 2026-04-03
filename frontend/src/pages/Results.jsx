@@ -126,7 +126,6 @@ const Results = () => {
               userText = ans.options[Number(userText)];
             }
 
-            // Шынайы дұрыстығын тексеру
             const isTrulyCorrect = String(userText).trim() === String(correctText).trim();
 
             const correctIndex = ans.options.findIndex(opt => String(opt).trim() === String(correctText).trim());

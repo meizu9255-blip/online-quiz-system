@@ -7,7 +7,7 @@ const Quiz = () => {
   const navigate = useNavigate();
   const user = localStorage.getItem('currentUser') || 'Қонақ';
 
-  // Динамикалық стейттер (Бэкенд үшін)
+  // Динамикалық стейттер 
   const [currentQuiz, setCurrentQuiz] = useState(null);
   const [loading, setLoading] = useState(true);
   
@@ -17,7 +17,7 @@ const Quiz = () => {
   const [flagged, setFlagged] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isFinished, setIsFinished] = useState(false); // Тесттің аяқталғанын білу үшін
+  const [isFinished, setIsFinished] = useState(false); 
 
   // 1. БЭКЕНДТЕН ТЕСТТІ АЛУ
   useEffect(() => {
@@ -83,23 +83,20 @@ const Quiz = () => {
   // 3. НӘТИЖЕНІ БАЗАҒА САҚТАП, НӘТИЖЕ БЕТІНЕ ӨТУ
   const handleFinish = async () => {
     setIsSubmitting(true);
-    setIsFinished(true); // Енді F5 басқанда ескерту шықпайды
+    setIsFinished(true); 
     let correctCount = 0;
 
     const detailedAnswers = currentQuiz.questions.map((q, i) => {
-      // 1. Дұрыс жауапты мәтінге айналдыру (егер базада индекс болса)
       let correctText = q.correctAnswer;
       if (correctText !== null && correctText !== undefined && !isNaN(correctText) && String(correctText).trim() !== '' && Number(correctText) >= 0 && Number(correctText) < q.options.length) {
         correctText = q.options[Number(correctText)];
       }
 
-      // 2. Пайдаланушының жауабын мәтінге айналдыру
       let userSelectedText = null;
       if (answers[i] !== -1) {
         userSelectedText = q.options[answers[i]];
       }
 
-      // 3. Шынайы теңдікті тексеру
       let isCorrect = false;
       if (userSelectedText !== null && correctText !== null) {
          isCorrect = String(userSelectedText).trim() === String(correctText).trim();
@@ -111,7 +108,7 @@ const Quiz = () => {
         question: q.questionText || q.question, 
         options: q.options, 
         userAnswer: userSelectedText,
-        correctAnswer: correctText, // Енді базаға индекс емес, нақты дұрыс жауап мәтіні кетеді
+        correctAnswer: correctText, 
         isCorrect
       };
     });
