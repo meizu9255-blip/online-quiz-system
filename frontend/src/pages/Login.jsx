@@ -35,7 +35,7 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      const response = await axios.post('http://localhost:5000/api/login', { email, password });
+      const response = await axios.post('https://online-quiz-system-ufwp.onrender.com/api/login', { email, password });
       
       localStorage.setItem('currentUser', response.data.username);
       

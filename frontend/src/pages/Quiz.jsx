@@ -23,7 +23,7 @@ const Quiz = () => {
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/quizzes');
+        const response = await axios.get('https://online-quiz-system-ufwp.onrender.com/api/quizzes');
         const foundQuiz = response.data.find(q => String(q.id) === String(id) || String(q._id) === String(id));
         
         if (foundQuiz) {
@@ -127,7 +127,7 @@ const Quiz = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/api/results', newResult);
+      const response = await axios.post('https://online-quiz-system-ufwp.onrender.com/api/results', newResult);
       navigate(`/results?id=${response.data.id}`); 
     } catch (error) {
       alert("Серверге сақтау қатесі!"); 

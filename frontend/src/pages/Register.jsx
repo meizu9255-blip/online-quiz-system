@@ -32,7 +32,7 @@ const Register = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/register', { username, email, password });
+      const response = await axios.post('https://online-quiz-system-ufwp.onrender.com/api/register', { username, email, password });
       localStorage.setItem('currentUser', response.data.username);
       navigate('/dashboard');
     } catch (error) {

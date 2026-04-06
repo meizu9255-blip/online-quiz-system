@@ -17,7 +17,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchMyResults = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/results');
+        const response = await axios.get('https://online-quiz-system-ufwp.onrender.com/api/results');
         const myData = response.data.filter(r => r.username === currentUser);
         setResults(myData);
       } catch (error) {

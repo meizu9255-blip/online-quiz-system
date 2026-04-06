@@ -35,7 +35,7 @@ const AdminPanel = () => {
 
   const fetchQuizzes = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/quizzes');
+      const response = await axios.get('https://online-quiz-system-ufwp.onrender.com/api/quizzes');
       setQuizzes(response.data);
     } catch (error) {
       console.error("Дерек алу қатесі:", error);
@@ -58,10 +58,10 @@ const AdminPanel = () => {
 
     try {
       if (editMode) {
-        await axios.put(`http://localhost:5000/api/quizzes/${formData.id || formData._id}`, formData);
+        await axios.put(`https://online-quiz-system-ufwp.onrender.com/api/quizzes/${formData.id || formData._id}`, formData);
         alert('Тест сәтті жаңартылды!');
       } else {
-        await axios.post('http://localhost:5000/api/quizzes', formData);
+        await axios.post('https://online-quiz-system-ufwp.onrender.com/api/quizzes', formData);
         alert('Жаңа тест сәтті қосылды!');
       }
       setIsModalOpen(false);
@@ -75,7 +75,7 @@ const AdminPanel = () => {
   const handleDelete = async (id) => {
     if(window.confirm('Бұл тестті өшіруге сенімдісіз бе?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/quizzes/${id}`);
+        await axios.delete(`https://online-quiz-system-ufwp.onrender.com/api/quizzes/${id}`);
         alert('Тест өшірілді!');
         fetchQuizzes();
       } catch (error) {

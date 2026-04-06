@@ -11,7 +11,7 @@ const Leaderboard = () => {
   useEffect(() => {
     const fetchAndSync = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/results');
+        const response = await axios.get('https://online-quiz-system-ufwp.onrender.com/api/results');
         const allResults = response.data;
         const userStats = {};
 
@@ -39,7 +39,7 @@ const Leaderboard = () => {
         // === АВТОМАТТЫ СИНХРОНДАУ БӨЛІМІ ===
         // Есептелген деректерді PostgreSQL-дегі leaderboard кестесіне үнсіз жіберу
         if (processedUsers.length > 0) {
-            await axios.post('http://localhost:5000/api/auto-sync', { results: processedUsers });
+            await axios.post('https://online-quiz-system-ufwp.onrender.com/api/auto-sync', { results: processedUsers });
         }
         // =================================
 

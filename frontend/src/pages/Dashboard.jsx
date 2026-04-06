@@ -15,8 +15,8 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const [resResults, resQuizzes] = await Promise.all([
-          axios.get('http://localhost:5000/api/results'),
-          axios.get('http://localhost:5000/api/quizzes')
+          axios.get('https://online-quiz-system-ufwp.onrender.com/api/results'),
+          axios.get('https://online-quiz-system-ufwp.onrender.com/api/quizzes')
         ]);
         
         setAllResults(resResults.data);
