@@ -26,6 +26,66 @@ app.use(cors());
 app.use(express.json());
 
 // ==========================================
+// 0. ДЕРЕКҚОРДЫ АВТОМАТТЫ ИНИЦИАЛИЗАЦИЯЛАУ
+// ==========================================
+const initDatabase = async () => {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(255) UNIQUE NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS quizzes (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                category VARCHAR(255),
+                difficulty VARCHAR(50),
+                questions JSONB
+            );
+            CREATE TABLE IF NOT EXISTS results (
+                id SERIAL PRIMARY KEY,
+                quiz_id INTEGER,
+                quiz_title VARCHAR(255),
+                category VARCHAR(255) DEFAULT 'Жалпы',
+                score NUMERIC,
+                correct_count INTEGER,
+                total_questions INTEGER,
+                time_spent VARCHAR(50),
+                username VARCHAR(255),
+                user_id INTEGER,
+                answers JSONB,
+                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS leaderboard (
+                user_id INTEGER PRIMARY KEY,
+                total_xp INTEGER,
+                quizzes_passed INTEGER,
+                average_score NUMERIC,
+                last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS mistakes (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(255) NOT NULL,
+                category VARCHAR(255) DEFAULT 'Жалпы',
+                question TEXT NOT NULL,
+                options JSONB NOT NULL,
+                correct_answer TEXT NOT NULL,
+                UNIQUE(username, question)
+            );
+        `);
+        // Ескі база болса, category қосу
+        await pool.query(`ALTER TABLE results ADD COLUMN IF NOT EXISTS category VARCHAR(255) DEFAULT 'Жалпы';`);
+        console.log('✅ Дерекқор құрылымы (5 кесте) толық орнатылды және жұмысқа дайын!');
+    } catch (error) {
+        console.error('Дерекқорды жүктеуде қате кетті:', error.message);
+    }
+};
+
+initDatabase();
+
+// ==========================================
 // 1. АВТОРИЗАЦИЯ ЖӘНЕ ТІРКЕЛУ
 // ==========================================
 
