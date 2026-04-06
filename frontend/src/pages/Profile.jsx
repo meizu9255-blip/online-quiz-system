@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import Navbar from '../components/Navbar';
 
 const Profile = () => {
@@ -14,12 +15,22 @@ const Profile = () => {
   const [email, setEmail] = useState(`${currentUser.toLowerCase().replace(/\s+/g, '')}@quiz.kz`);
   const [password, setPassword] = useState('');
 
+  const [analytics, setAnalytics] = useState({ radarData: [], totalMistakes: 0 });
+
   useEffect(() => {
     const fetchMyResults = async () => {
       try {
         const response = await axios.get('https://online-quiz-system-ufwp.onrender.com/api/results');
         const myData = response.data.filter(r => r.username === currentUser);
         setResults(myData);
+
+        try {
+            const statRes = await axios.get(`https://online-quiz-system-ufwp.onrender.com/api/analytics/${currentUser}`);
+            setAnalytics(statRes.data);
+        } catch (e) {
+            console.error("Аналитика қатесі:", e);
+        }
+
       } catch (error) {
         console.error("Дерек алу қатесі:", error);
       } finally {
@@ -149,6 +160,38 @@ const Profile = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* ЖАҢА АНАЛИТИКА ЖӘНЕ ҚАТЕМЕН ЖҰМЫС БӨЛІМІ */}
+          <div className="widget animate-fade-in delay-1" style={{ marginTop: '2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>Аналитика (Radar)</h2>
+                  <span style={{ background: 'var(--danger-light)', color: 'var(--danger)', padding: '6px 12px', borderRadius: '12px', fontWeight: 700, fontSize: '0.85rem' }}>
+                      {analytics.totalMistakes} қате жіберілді
+                  </span>
+              </div>
+              
+              {analytics.radarData && analytics.radarData.length > 0 ? (
+                  <div style={{ width: '100%', height: '300px' }}>
+                      <ResponsiveContainer width="100%" height="100%">
+                          <RadarChart cx="50%" cy="50%" outerRadius="80%" data={analytics.radarData}>
+                              <PolarGrid stroke="var(--border)" />
+                              <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text-secondary)', fontSize: 12, fontWeight: 600 }} />
+                              <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                              <Radar name="Білім деңгейі" dataKey="A" stroke="#8b5cf6" strokeWidth={3} fill="#8b5cf6" fillOpacity={0.4} />
+                          </RadarChart>
+                      </ResponsiveContainer>
+                  </div>
+              ) : (
+                  <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>Аналитика жиналуда...</div>
+              )}
+
+              <button 
+                  onClick={() => navigate('/quiz/smart')} 
+                  disabled={analytics.totalMistakes === 0}
+                  style={{ width: '100%', padding: '16px', borderRadius: '16px', background: analytics.totalMistakes > 0 ? 'linear-gradient(135deg, #ef4444, #f97316)' : 'var(--bg-input)', color: analytics.totalMistakes > 0 ? 'white' : 'var(--text-muted)', border: 'none', fontWeight: 800, fontSize: '1.05rem', cursor: analytics.totalMistakes > 0 ? 'pointer' : 'not-allowed', marginTop: '1rem', transition: '0.3s', boxShadow: analytics.totalMistakes > 0 ? '0 4px 15px rgba(239, 68, 68, 0.4)' : 'none' }}>
+                  🔥 ҚАТЕЛЕРМЕН ЖҰМЫС (SMART QUIZ)
+              </button>
           </div>
         </div>
 

@@ -92,13 +92,107 @@ app.get('/api/results', async (req, res) => {
 
 app.post('/api/results', async (req, res) => {
     try {
-        const { quizId, quizTitle, score, correctCount, totalQuestions, timeSpent, username, answers } = req.body;
+        const { quizId, quizTitle, category, score, correctCount, totalQuestions, timeSpent, username, answers } = req.body;
+        
+        // 1. Нәтижені results кестесіне сақтау
         const newResult = await pool.query(
-            `INSERT INTO results (quiz_id, quiz_title, score, correct_count, total_questions, time_spent, username, answers) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-            [quizId, quizTitle, score, correctCount, totalQuestions, timeSpent, username, JSON.stringify(answers)]
+            `INSERT INTO results (quiz_id, quiz_title, category, score, correct_count, total_questions, time_spent, username, answers) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+            [quizId, quizTitle, category || 'Жалпы', score, correctCount, totalQuestions, timeSpent, username, JSON.stringify(answers)]
         );
+
+        // 2. Қателескен сұрақтарды mistakes кестесіне сақтау
+        if (answers && answers.length > 0) {
+            for (let ans of answers) {
+                if (ans.isCorrect === false) {
+                    try {
+                        await pool.query(
+                            `INSERT INTO mistakes (username, category, question, options, correct_answer)
+                             VALUES ($1, $2, $3, $4, $5)
+                             ON CONFLICT (username, question) DO NOTHING`,
+                            [username, category || 'Жалпы', ans.question, JSON.stringify(ans.options), ans.correctAnswer]
+                        );
+                    } catch (e) {
+                        console.error('Қатені сақтауда ақау шықты:', e.message);
+                    }
+                }
+            }
+        }
+
         res.json(newResult.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+// ==========================================
+// 2.5 ИНТЕЛЛЕКТУАЛДЫ АНАЛИТИКА ЖӘНЕ ҚАТЕМЕН ЖҰМЫС
+// ==========================================
+
+app.get('/api/analytics/:username', async (req, res) => {
+    try {
+        const { username } = req.params;
+        
+        // Пайдаланушының тапсырған тесттерінің статистикасы
+        const results = await pool.query('SELECT category, score FROM results WHERE username = $1', [username]);
+        
+        // Категориялар бойынша орташа ұпай есептеу (Radar Chart үшін)
+        const categoryMap = {};
+        results.rows.forEach(r => {
+            const cat = r.category || 'Жалпы';
+            if (!categoryMap[cat]) categoryMap[cat] = { total: 0, count: 0 };
+            categoryMap[cat].total += Number(r.score);
+            categoryMap[cat].count += 1;
+        });
+
+        const radarData = Object.keys(categoryMap).map(key => ({
+            subject: key,
+            A: Math.round(categoryMap[key].total / categoryMap[key].count),
+            fullMark: 100
+        }));
+
+        // Қателескен сұрақтар санын алу
+        const mistakes = await pool.query('SELECT COUNT(*) FROM mistakes WHERE username = $1', [username]);
+
+        res.json({ radarData, totalMistakes: parseInt(mistakes.rows[0].count) });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/smart-quiz/:username', async (req, res) => {
+    try {
+        const { username } = req.params;
+        
+        // Базадан рандомды 10 қатені алу
+        const mistakes = await pool.query('SELECT * FROM mistakes WHERE username = $1 ORDER BY RANDOM() LIMIT 10', [username]);
+        
+        if (mistakes.rows.length === 0) {
+            return res.status(404).json({ error: "Қателескен сұрақтар табылмады!" });
+        }
+
+        // Кәдімгі Quiz форматына айналдыру
+        const questions = mistakes.rows.map(m => {
+            const options = typeof m.options === 'string' ? JSON.parse(m.options) : m.options;
+            return {
+                question: m.question,
+                options: options,
+                correctAnswer: options.indexOf(m.correct_answer)
+            };
+        });
+
+        const smartQuiz = {
+            id: 'smart-quiz',
+            title: '🔥 Менің Қателерім (Smart Quiz)',
+            category: 'Қатемен жұмыс',
+            difficulty: 'Индивидуальды',
+            timeLimit: questions.length * 60,
+            questions: questions
+        };
+
+        res.json(smartQuiz);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

@@ -23,6 +23,17 @@ const Quiz = () => {
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
+        if (id === 'smart') {
+            const response = await axios.get(`https://online-quiz-system-ufwp.onrender.com/api/smart-quiz/${user}`);
+            const processedQuiz = response.data;
+            setCurrentQuiz(processedQuiz);
+            const qCount = processedQuiz.questions.length;
+            setAnswers(Array(qCount).fill(-1));
+            setFlagged(Array(qCount).fill(false));
+            setTimeLeft(processedQuiz.timeLimit || qCount * 60);
+            return;
+        }
+
         const response = await axios.get('https://online-quiz-system-ufwp.onrender.com/api/quizzes');
         const foundQuiz = response.data.find(q => String(q.id) === String(id) || String(q._id) === String(id));
         
@@ -42,7 +53,12 @@ const Quiz = () => {
           setTimeLeft(processedQuiz.timeLimit || qCount * 60);
         }
       } catch (error) {
-        console.error("Тестті алуда қате кетті:", error);
+        if (error.response?.status === 404 && id === 'smart') {
+            alert('Жарайсыз! Қателескен сұрақтарыңыз жоқ!');
+            navigate('/dashboard');
+        } else {
+            console.error("Тестті алуда қате кетті:", error);
+        }
       } finally {
         loading && setLoading(false);
       }
@@ -118,6 +134,7 @@ const Quiz = () => {
     const newResult = {
       quizId: currentQuiz.id || id, 
       quizTitle: currentQuiz.title,
+      category: currentQuiz.category || 'Жалпы', // <-- Категория қосылды !!
       score: Math.round((correctCount / currentQuiz.questions.length) * 100),
       correctCount, 
       totalQuestions: currentQuiz.questions.length,
