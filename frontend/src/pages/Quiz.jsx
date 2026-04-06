@@ -194,6 +194,20 @@ const Quiz = () => {
         .b-blue { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .b-blue:hover { filter: brightness(1.1); box-shadow: 0 4px 12px rgba(79,70,229,0.2); }
         .b-blue:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        /* МОБИЛЬДІ АДАПТИВТІЛІК */
+        @media (max-width: 1024px) {
+          .q-layout { grid-template-columns: 1fr; padding: 0 1.5rem; gap: 1.5rem; }
+          .q-nav-grid { display: flex; flex-wrap: wrap; justify-content: center; }
+          .n-btn { width: 44px; }
+        }
+        @media (max-width: 768px) {
+          .q-top { padding: 0 1rem; height: auto; flex-direction: column; gap: 1rem; padding-top: 1rem; padding-bottom: 1rem; }
+          .q-top > div { width: 100%; justify-content: space-between; flex-wrap: wrap; }
+          .q-layout { margin: 1rem auto; padding: 0 1rem; gap: 1rem; }
+          .q-main { padding: 1.5rem; border-radius: 16px; }
+          .opt-item { padding: 1rem; }
+        }
       `}</style>
 
       {/* ЖОҒАРҒЫ ПАНЕЛЬ */}
@@ -210,7 +224,7 @@ const Quiz = () => {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '250px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: '200px' }}>
             <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>{currentIndex + 1}/{currentQuiz.questions.length}</span>
             <div style={{ flex: 1, height: '8px', background: 'var(--bg-page)', borderRadius: '4px', overflow: 'hidden' }}>
               <div style={{ height: '100%', width: `${progressPercent}%`, background: 'var(--primary)', transition: '0.3s ease' }}></div>

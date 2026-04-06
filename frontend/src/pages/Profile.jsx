@@ -103,11 +103,14 @@ const Profile = () => {
           .profile-layout { grid-template-columns: 1fr; padding: 0 1.5rem; }
         }
         @media (max-width: 768px) {
-          .profile-layout { padding: 0 1rem; margin: 1.5rem auto; }
+          .profile-layout { padding: 0 1rem; margin: 1rem auto; gap: 1rem; }
           .form-grid { grid-template-columns: 1fr; gap: 0; }
           .p-avatar { width: 90px; height: 90px; font-size: 2.5rem; margin-top: -45px; }
           .stat-val { font-size: 1.25rem; }
-          .widget { padding: 1.5rem; }
+          .widget { padding: 1.25rem; border-radius: 16px; margin-bottom: 1rem; }
+          .stat-grid { margin-top: 1.5rem; padding-top: 1.5rem; gap: 0.5rem; }
+          .btn-blue { padding: 12px; font-size: 0.95rem; width: 100%; display: block; }
+          .widget h2 { font-size: 1.15rem !important; }
         }
       `}</style>
 
@@ -174,9 +177,9 @@ const Profile = () => {
               {analytics.radarData && analytics.radarData.length > 0 ? (
                   <div style={{ width: '100%', height: '300px' }}>
                       <ResponsiveContainer width="100%" height="100%">
-                          <RadarChart cx="50%" cy="50%" outerRadius="80%" data={analytics.radarData}>
+                          <RadarChart cx="50%" cy="50%" outerRadius="60%" data={analytics.radarData}>
                               <PolarGrid stroke="var(--border)" />
-                              <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text-secondary)', fontSize: 12, fontWeight: 600 }} />
+                              <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontWeight: 600 }} />
                               <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                               <Radar name="Білім деңгейі" dataKey="A" stroke="#8b5cf6" strokeWidth={3} fill="#8b5cf6" fillOpacity={0.4} />
                           </RadarChart>
