@@ -155,10 +155,13 @@ app.post('/api/results', async (req, res) => {
         const { quizId, quizTitle, category, score, correctCount, totalQuestions, timeSpent, username, answers } = req.body;
         
         // 1. Нәтижені results кестесіне сақтау
+        let parsedQuizId = parseInt(quizId);
+        if (isNaN(parsedQuizId)) parsedQuizId = null; // Smart Quiz үшін null сақтаймыз
+
         const newResult = await pool.query(
             `INSERT INTO results (quiz_id, quiz_title, category, score, correct_count, total_questions, time_spent, username, answers) 
              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-            [quizId, quizTitle, category || 'Жалпы', score, correctCount, totalQuestions, timeSpent, username, JSON.stringify(answers)]
+            [parsedQuizId, quizTitle, category || 'Жалпы', score, correctCount, totalQuestions, timeSpent, username, JSON.stringify(answers)]
         );
 
         // 2. Қателескен сұрақтарды mistakes кестесіне сақтау

@@ -32,7 +32,7 @@ const Dashboard = () => {
   }, [user]);
 
   const totalTests = userResults.length;
-  const avgScore = totalTests > 0 ? Math.round(userResults.reduce((acc, curr) => acc + curr.score, 0) / totalTests) : 0;
+  const avgScore = totalTests > 0 ? Math.round(userResults.reduce((acc, curr) => acc + Number(curr.score), 0) / totalTests) : 0;
   const recentResults = [...userResults].reverse().slice(0, 4);
 
   let userStatus = "🎓 Жаңа оқушы";
@@ -53,12 +53,13 @@ const Dashboard = () => {
   const userStats = {};
   allResults.forEach(r => {
     const uname = r.username || 'Атаусыз';
+    const numScore = Number(r.score);
     if (!userStats[uname]) {
       userStats[uname] = { username: uname, tests: 0, totalScore: 0, bestScore: 0 };
     }
     userStats[uname].tests += 1;
-    userStats[uname].totalScore += r.score;
-    if (r.score > userStats[uname].bestScore) userStats[uname].bestScore = r.score;
+    userStats[uname].totalScore += numScore;
+    if (numScore > userStats[uname].bestScore) userStats[uname].bestScore = numScore;
   });
 
   const processedUsers = Object.values(userStats).map(u => ({
@@ -91,7 +92,7 @@ const Dashboard = () => {
     const d = new Date(r.date);
     if (d >= startOfWeek) {
       const dayIdx = d.getDay() === 0 ? 6 : d.getDay() - 1;
-      dayTotals[dayIdx].sum += r.score;
+      dayTotals[dayIdx].sum += Number(r.score);
       dayTotals[dayIdx].count += 1;
     }
   });
@@ -101,7 +102,7 @@ const Dashboard = () => {
   }
 
   const thisWeekTests = userResults.filter(r => new Date(r.date) >= startOfWeek);
-  const thisWeekAvg = thisWeekTests.length > 0 ? Math.round(thisWeekTests.reduce((acc, curr) => acc + curr.score, 0) / thisWeekTests.length) : 0;
+  const thisWeekAvg = thisWeekTests.length > 0 ? Math.round(thisWeekTests.reduce((acc, curr) => acc + Number(curr.score), 0) / thisWeekTests.length) : 0;
   const testsThisWeekCount = thisWeekTests.length;
 
   const categories = ['Барлығы', 'Web', 'Программалау', 'Желілер', 'Қауіпсіздік'];

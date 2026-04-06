@@ -41,8 +41,8 @@ const Profile = () => {
   }, [currentUser]);
 
   const totalTests = results.length;
-  const avgScore = totalTests > 0 ? Math.round(results.reduce((acc, curr) => acc + curr.score, 0) / totalTests) : 0;
-  const bestScore = totalTests > 0 ? Math.max(...results.map(r => r.score)) : 0;
+  const avgScore = totalTests > 0 ? Math.round(results.reduce((acc, curr) => acc + Number(curr.score), 0) / totalTests) : 0;
+  const bestScore = totalTests > 0 ? Math.max(...results.map(r => Number(r.score))) : 0;
   const recentResults = [...results].reverse().slice(0, 5);
 
   let userStatus = "🎓 Жаңа оқушы";
@@ -256,10 +256,11 @@ const Profile = () => {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {recentResults.map((r, i) => {
+                  const numScore = Number(r.score);
                   let badgeBg = 'var(--danger-light)'; let badgeColor = 'var(--danger)';
-                  if (r.score >= 90) { badgeBg = 'var(--success-light)'; badgeColor = 'var(--success)'; }
-                  else if (r.score >= 70) { badgeBg = 'var(--primary-light)'; badgeColor = 'var(--primary)'; }
-                  else if (r.score >= 50) { badgeBg = 'var(--warning-light)'; badgeColor = 'var(--warning)'; }
+                  if (numScore >= 90) { badgeBg = 'var(--success-light)'; badgeColor = 'var(--success)'; }
+                  else if (numScore >= 70) { badgeBg = 'var(--primary-light)'; badgeColor = 'var(--primary)'; }
+                  else if (numScore >= 50) { badgeBg = 'var(--warning-light)'; badgeColor = 'var(--warning)'; }
 
                   return (
                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--bg-input)', borderRadius: '16px', border: '1px solid var(--border)', flexWrap: 'wrap', gap: '10px' }}>
@@ -270,7 +271,7 @@ const Profile = () => {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                         <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{r.correct_count}/{r.total_questions} дұрыс</div>
                         <span style={{ background: badgeBg, color: badgeColor, padding: '6px 12px', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 800 }}>
-                          {r.score}%
+                          {numScore}%
                         </span>
                       </div>
                     </div>
