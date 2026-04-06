@@ -7,6 +7,7 @@ import Results from './pages/Results';
 import Leaderboard from './pages/Leaderboard'; 
 import Profile from './pages/Profile';        
 import AdminPanel from './pages/AdminPanel';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/leaderboard" element={<Leaderboard />} /> {/* Рейтинг жолы */}
         <Route path="/profile" element={<Profile />} />         {/* Профиль жолы */}
         <Route path="/admin" element={<AdminPanel />} />
+        <Route path="*" element={<NotFound />} /> {/* 404 Қателік беті */}
       </Routes>
     </Router>
   );

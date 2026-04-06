@@ -34,8 +34,9 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar">
-      <style>{`
+    <header>
+      <nav className="navbar">
+        <style>{`
         .navbar {
           background: var(--bg-card);
           border-bottom: 1px solid var(--border);
@@ -138,7 +139,8 @@ const Navbar = () => {
         <Link to="/profile" className="nav-link" onClick={() => setIsMenuOpen(false)}>Профиль</Link>
         {isAdmin && <Link to="/admin" className="nav-link" onClick={() => setIsMenuOpen(false)}>⚙️ Админ Панель</Link>}
       </div>
-    </nav>
+      </nav>
+    </header>
   );
 };
 

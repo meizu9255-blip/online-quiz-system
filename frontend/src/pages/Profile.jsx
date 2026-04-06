@@ -114,11 +114,11 @@ const Profile = () => {
         }
       `}</style>
 
-      <div className="profile-layout">
+      <main className="profile-layout">
         
         {/* СОЛ ЖАҚ: ПРОФИЛЬ */}
-        <div className="animate-fade-in">
-          <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+        <section className="animate-fade-in">
+          <article style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
             
             <div style={{ height: '120px', background: 'linear-gradient(135deg, var(--border) 0%, var(--bg-card) 100%)', borderRadius: '24px 24px 0 0', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', inset: 0, opacity: 0.2, backgroundImage: 'radial-gradient(var(--text-secondary) 1.5px, transparent 1.5px)', backgroundSize: '16px 16px' }}></div>
@@ -163,10 +163,10 @@ const Profile = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </article>
 
           {/* ЖАҢА АНАЛИТИКА ЖӘНЕ ҚАТЕМЕН ЖҰМЫС БӨЛІМІ */}
-          <div className="widget animate-fade-in delay-1" style={{ marginTop: '2rem' }}>
+          <article className="widget animate-fade-in delay-1" style={{ marginTop: '2rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>Аналитика (Radar)</h2>
                   <span style={{ background: 'var(--danger-light)', color: 'var(--danger)', padding: '6px 12px', borderRadius: '12px', fontWeight: 700, fontSize: '0.85rem' }}>
@@ -195,13 +195,13 @@ const Profile = () => {
                   style={{ width: '100%', padding: '16px', borderRadius: '16px', background: analytics.totalMistakes > 0 ? 'linear-gradient(135deg, #ef4444, #f97316)' : 'var(--bg-input)', color: analytics.totalMistakes > 0 ? 'white' : 'var(--text-muted)', border: 'none', fontWeight: 800, fontSize: '1.05rem', cursor: analytics.totalMistakes > 0 ? 'pointer' : 'not-allowed', marginTop: '1rem', transition: '0.3s', boxShadow: analytics.totalMistakes > 0 ? '0 4px 15px rgba(239, 68, 68, 0.4)' : 'none' }}>
                   🔥 ҚАТЕЛЕРМЕН ЖҰМЫС (SMART QUIZ)
               </button>
-          </div>
-        </div>
+          </article>
+        </section>
 
         {/* ОҢ ЖАҚ: ПАРАМЕТРЛЕР ЖӘНЕ ТАРИХ */}
-        <div className="animate-fade-in delay-1">
+        <aside className="animate-fade-in delay-1">
           
-          <div className="widget">
+          <article className="widget">
             <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>Профильді өңдеу</h2>
             
             <form onSubmit={handleUpdateProfile}>
@@ -243,9 +243,9 @@ const Profile = () => {
                 <button type="submit" className="btn-blue" style={{ width: 'auto' }}>Өзгерістерді сақтау</button>
               </div>
             </form>
-          </div>
+          </article>
 
-          <div className="widget animate-fade-in delay-2">
+          <article className="widget animate-fade-in delay-2">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
               <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>Соңғы нәтижелер</h2>
               <Link to="/results" style={{ color: 'var(--primary)', fontWeight: 600, fontSize: '0.9rem', textDecoration: 'none' }}>Толық тарих {'>'}</Link>
@@ -282,10 +282,10 @@ const Profile = () => {
                 })}
               </div>
             )}
-          </div>
+          </article>
 
-        </div>
-      </div>
+        </aside>
+      </main>
     </div>
   );
 };

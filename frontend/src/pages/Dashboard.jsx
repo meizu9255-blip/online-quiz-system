@@ -188,7 +188,7 @@ const Dashboard = () => {
         <div className="dash-layout">
           
           {/* ================= СОЛ ЖАҚ ================= */}
-          <div style={{ width: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
+          <section style={{ width: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
             <div className="main-banner">
               <div className="banner-content">
                 <div style={{ opacity: 0.9, fontSize: '0.9rem', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'inherit', gap: '6px' }}>Қайырлы күн 👋</div>
@@ -243,7 +243,7 @@ const Dashboard = () => {
                   const timeLimit = q.timeLimit || (questionCount * 60);
 
                   return (
-                    <div key={q.id} className="q-card">
+                    <article key={q.id} className="q-card">
                       <div className="q-card-top" style={{ background: qBg, height: '90px' }}>
                         <div style={{ width: '40px', height: '40px', background: 'rgba(255,255,255,0.2)', borderRadius: '12px', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.5rem' }}>{qIcon}</div>
                         <div style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>{q.difficulty || 'Белгісіз'}</div>
@@ -261,15 +261,15 @@ const Dashboard = () => {
                           ▷ Тестті бастау
                         </Link>
                       </div>
-                    </div>
+                    </article>
                   )
                 })}
               </div>
             )}
-          </div>
+          </section>
 
           {/* ================= ОҢ ЖАҚ ВИДЖЕТТЕР ================= */}
-          <div style={{ width: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
+          <aside style={{ width: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
             
             {/* Профиль XP */}
             <div className="widget">
@@ -338,8 +338,7 @@ const Dashboard = () => {
               </div>
               <Link to="/leaderboard" style={{ display: 'block', textAlign: 'center', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '12px', borderRadius: '12px', color: 'white', textDecoration: 'none', fontWeight: 600, fontSize: '0.85rem' }}>👥 Толық рейтингті көру</Link>
             </div>
-
-          </div>
+          </aside>
         </div>
       </main>
     </div>
