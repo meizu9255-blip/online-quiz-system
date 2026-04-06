@@ -10,7 +10,24 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [slowLoading, setSlowLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false); 
+
+  // Серверді алдын-ала ояту (Render ұйқысынан ояту үшін)
+  useEffect(() => {
+    axios.get('https://online-quiz-system-ufwp.onrender.com/api/quizzes').catch(() => {});
+  }, []);
+
+  // Көп күтіп қалсак (Render мәселесі)
+  useEffect(() => {
+    let timer;
+    if (isLoading) {
+      timer = setTimeout(() => setSlowLoading(true), 5000);
+    } else {
+      setSlowLoading(false);
+    }
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   useEffect(() => {
     const handleMessage = (event) => {
@@ -191,8 +208,10 @@ const Register = () => {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary btn-block" disabled={isLoading} style={{ width: '100%', padding: '12px', borderRadius: '12px', border: 'none', fontWeight: 600, cursor: 'pointer' }}>
-              {isLoading ? 'Күте тұрыңыз...' : 'Тіркелу'}
+            <button type="submit" className="btn btn-primary btn-block" disabled={isLoading} style={{ width: '100%', padding: '12px', borderRadius: '12px', border: 'none', fontWeight: 600, cursor: 'pointer', transition: 'all 0.3s' }}>
+              {isLoading 
+                ? (slowLoading ? 'Бұлтты сервер оянуда (20-30 сек)... 🚀' : 'Күте тұрыңыз...') 
+                : 'Тіркелуді аяқтау'}
             </button>
           </form>
 

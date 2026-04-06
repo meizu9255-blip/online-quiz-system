@@ -9,8 +9,24 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false); 
-  
+  const [slowLoading, setSlowLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+  // Серверді алдын-ала ояту (Render ұйқысынан ояту үшін)
+  useEffect(() => {
+    axios.get('https://online-quiz-system-ufwp.onrender.com/api/quizzes').catch(() => {});
+  }, []);
+
+  // Көп күтіп қалсак (Render мәселесі)
+  useEffect(() => {
+    let timer;
+    if (isLoading) {
+      timer = setTimeout(() => setSlowLoading(true), 5000);
+    } else {
+      setSlowLoading(false);
+    }
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   // Құпия сөзді қалпына келтіру үшін жаңа стейттер
   const [showForgotModal, setShowForgotModal] = useState(false);
@@ -196,8 +212,10 @@ const Login = () => {
               <label htmlFor="remember" style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>30 күн бойы есте сақта</label>
             </div>
 
-            <button type="submit" className="btn btn-primary btn-block" disabled={isLoading}>
-              {isLoading ? 'Күте тұрыңыз...' : 'Жүйеге кіру'}
+            <button type="submit" className="btn btn-primary btn-block" disabled={isLoading} style={{ transition: 'all 0.3s' }}>
+              {isLoading 
+                ? (slowLoading ? 'Бұлтты сервер оянуда (20-30 сек)... 🚀' : 'Күте тұрыңыз...') 
+                : 'Жүйеге кіру'}
             </button>
           </form>
 
