@@ -4,15 +4,23 @@ const { Pool } = require('pg');
 const bcrypt = require('bcrypt'); 
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'beksh_db', 
-    password: '1212',     
-    port: 5432,
-});
+// Render-ден DATABASE_URL келсе соны қолданады, әйтпесе локалды (localhost) базаға қосылады
+const pool = new Pool(
+    process.env.DATABASE_URL 
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false }
+      }
+    : {
+        user: 'postgres',
+        host: 'localhost',
+        database: 'beksh_db', 
+        password: '1212',     
+        port: 5432,
+      }
+);
 
 app.use(cors());
 app.use(express.json());
