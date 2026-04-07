@@ -17,12 +17,13 @@ const Leaderboard = () => {
 
         allResults.forEach(r => {
           const uname = r.username || 'Атаусыз';
+          const scoreNum = Number(r.score) || 0;
           if (!userStats[uname]) {
             userStats[uname] = { username: uname, tests: 0, totalScore: 0, bestScore: 0 };
           }
           userStats[uname].tests += 1;
-          userStats[uname].totalScore += r.score;
-          if (r.score > userStats[uname].bestScore) userStats[uname].bestScore = r.score;
+          userStats[uname].totalScore += scoreNum;
+          if (scoreNum > userStats[uname].bestScore) userStats[uname].bestScore = scoreNum;
         });
 
         const processedUsers = Object.values(userStats).map(user => ({
