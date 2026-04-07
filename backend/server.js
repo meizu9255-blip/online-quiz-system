@@ -138,6 +138,32 @@ app.post('/api/login', async (req, res) => {
 
 
 // ==========================================
+// 1.5 ПРОФИЛЬДІ ЖАҢАРТУ
+// ==========================================
+
+app.put('/api/update-profile', async (req, res) => {
+    try {
+        const { oldUsername, newUsername, email } = req.body;
+        
+        if (newUsername !== oldUsername) {
+            const userExists = await pool.query('SELECT * FROM users WHERE username = $1', [newUsername]);
+            if (userExists.rows.length > 0) {
+                return res.status(400).json({ error: "Бұл пайдаланушы аты бос емес, басқасын таңдаңыз!" });
+            }
+        }
+
+        await pool.query('UPDATE users SET username = $1, email = $2 WHERE username = $3', [newUsername, email, oldUsername]);
+        await pool.query('UPDATE results SET username = $1 WHERE username = $2', [newUsername, oldUsername]);
+        await pool.query('UPDATE mistakes SET username = $1 WHERE username = $2', [newUsername, oldUsername]);
+
+        res.json({ message: "Профиль сәтті жаңартылды!" });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: "Профильді жаңарту кезінде қате шықты" });
+    }
+});
+
+// ==========================================
 // 2. НӘТИЖЕЛЕРДІ САҚТАУ ЖӘНЕ АЛУ
 // ==========================================
 

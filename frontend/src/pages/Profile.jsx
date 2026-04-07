@@ -55,12 +55,21 @@ const Profile = () => {
   const maxXP = Math.ceil((currentXP + 1) / 1000) * 1000 || 1000;
   const xpPercent = Math.min(Math.round((currentXP / maxXP) * 100), 100);
 
-  const handleUpdateProfile = (e) => {
+  const handleUpdateProfile = async (e) => {
     e.preventDefault();
     if (newUsername.trim().length >= 3) {
-      localStorage.setItem('currentUser', newUsername);
-      alert("Профиль ақпараты сәтті жаңартылды!");
-      window.location.reload(); 
+      try {
+        await axios.put('https://online-quiz-system-ufwp.onrender.com/api/update-profile', {
+            oldUsername: currentUser,
+            newUsername: newUsername.trim(),
+            email: email
+        });
+        localStorage.setItem('currentUser', newUsername.trim());
+        alert("Профиль ақпараты сәтті жаңартылды!");
+        window.location.reload(); 
+      } catch (err) {
+        alert(err.response?.data?.error || "Профильді сақтау кезінде қате шықты!");
+      }
     } else {
       alert("Пайдаланушы аты кемінде 3 таңбадан тұруы тиіс!");
     }
