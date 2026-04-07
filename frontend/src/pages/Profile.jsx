@@ -15,6 +15,11 @@ const Profile = () => {
   const [email, setEmail] = useState(`${currentUser.toLowerCase().replace(/\s+/g, '')}@quiz.kz`);
   const [password, setPassword] = useState('');
 
+  // Логин өзгертілгенде email-ді автоматты түрде жаңарту
+  useEffect(() => {
+    setEmail(`${newUsername.toLowerCase().replace(/\s+/g, '')}@quiz.kz`);
+  }, [newUsername]);
+
   const [analytics, setAnalytics] = useState({ radarData: [], totalMistakes: 0 });
 
   useEffect(() => {
