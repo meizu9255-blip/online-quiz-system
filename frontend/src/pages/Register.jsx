@@ -146,7 +146,7 @@ const Register = () => {
           <p className="subtitle">Жаңа аккаунт жасап, біліміңізді тексеріңіз</p>
 
           <div style={{ display: 'flex', gap: '10px', marginBottom: '1.5rem' }}>
-            <Link to="/" className="btn btn-outline" style={{ flex: 1, textAlign: 'center' }}>Кіру</Link>
+            <Link to="/login" className="btn btn-outline" style={{ flex: 1, textAlign: 'center' }}>Кіру</Link>
             <Link to="/register" className="btn btn-primary" style={{ flex: 1, textAlign: 'center' }}>Тіркелу</Link>
           </div>
 

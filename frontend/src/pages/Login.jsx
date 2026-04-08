@@ -164,7 +164,7 @@ const Login = () => {
           <p className="subtitle">Оқуды жалғастыру үшін жүйеге кіріңіз</p>
 
           <div style={{ display: 'flex', gap: '10px', marginBottom: '1.5rem' }}>
-            <Link to="/" className="btn btn-primary" style={{ flex: 1, textAlign: 'center' }}>Кіру</Link>
+            <Link to="/login" className="btn btn-primary" style={{ flex: 1, textAlign: 'center' }}>Кіру</Link>
             <Link to="/register" className="btn btn-outline" style={{ flex: 1, textAlign: 'center' }}>Тіркелу</Link>
           </div>
 
