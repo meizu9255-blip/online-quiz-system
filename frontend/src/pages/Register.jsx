@@ -46,6 +46,7 @@ const Register = () => {
     
     if (password !== confirmPassword) { setErrorMsg("Құпия сөздер сәйкес келмейді!"); return; }
     if (username.trim().length < 3) { setErrorMsg("Пайдаланушы аты кемінде 3 таңбадан тұруы керек!"); return; }
+    if (/\d/.test(username)) { setErrorMsg("Пайдаланушы атында сандар болмауы керек!"); return; }
 
     setIsLoading(true);
     try {
@@ -154,7 +155,7 @@ const Register = () => {
           <form onSubmit={handleRegister}>
             <div className="form-group">
               <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.85rem' }}>Пайдаланушы аты</label>
-              <input type="text" placeholder="Мысалы: Beksultan" value={username} onChange={(e) => setUsername(e.target.value)} required style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-input)', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }} />
+              <input type="text" placeholder="Мысалы: Beksultan" value={username} onChange={(e) => { const val = e.target.value; if (!/\d/.test(val)) setUsername(val); }} required style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-input)', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }} />
             </div>
 
             <div className="form-group" style={{ marginTop: '1.2rem' }}>

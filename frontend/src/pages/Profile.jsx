@@ -62,6 +62,10 @@ const Profile = () => {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
+    if (/\d/.test(newUsername)) {
+      alert("Пайдаланушы атында сандар болмауы керек!");
+      return;
+    }
     if (newUsername.trim().length >= 3) {
       try {
         await axios.put('https://online-quiz-system-ufwp.onrender.com/api/update-profile', {
@@ -226,7 +230,7 @@ const Profile = () => {
                     type="text" 
                     className="input-fld" 
                     value={newUsername} 
-                    onChange={(e) => setNewUsername(e.target.value)} 
+                    onChange={(e) => { const val = e.target.value; if (!/\d/.test(val)) setNewUsername(val); }} 
                     required 
                   />
                 </div>
