@@ -46,20 +46,20 @@ const initDatabase = async () => {
             );
             CREATE TABLE IF NOT EXISTS results (
                 id SERIAL PRIMARY KEY,
-                quiz_id INTEGER,
+                quiz_id INTEGER REFERENCES quizzes(id) ON DELETE SET NULL,
                 quiz_title VARCHAR(255),
                 category VARCHAR(255) DEFAULT 'Жалпы',
                 score NUMERIC,
                 correct_count INTEGER,
                 total_questions INTEGER,
                 time_spent VARCHAR(50),
-                username VARCHAR(255),
-                user_id INTEGER,
+                username VARCHAR(255) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE,
+                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
                 answers JSONB,
                 date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE IF NOT EXISTS leaderboard (
-                user_id INTEGER PRIMARY KEY,
+                user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
                 total_xp INTEGER,
                 quizzes_passed INTEGER,
                 average_score NUMERIC,
@@ -67,7 +67,7 @@ const initDatabase = async () => {
             );
             CREATE TABLE IF NOT EXISTS mistakes (
                 id SERIAL PRIMARY KEY,
-                username VARCHAR(255) NOT NULL,
+                username VARCHAR(255) NOT NULL REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE,
                 category VARCHAR(255) DEFAULT 'Жалпы',
                 question TEXT NOT NULL,
                 options JSONB NOT NULL,
@@ -75,6 +75,33 @@ const initDatabase = async () => {
                 UNIQUE(username, question)
             );
         `);
+        
+        // Cоңғы жасалған кестелерге байланыстарды (Foreign Keys) қосу: 
+        try {
+            await pool.query(`
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'results_user_id_fkey') THEN
+                        ALTER TABLE results ADD CONSTRAINT results_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'results_username_fkey') THEN
+                        ALTER TABLE results ADD CONSTRAINT results_username_fkey FOREIGN KEY (username) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE;
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'results_quiz_id_fkey') THEN
+                        ALTER TABLE results ADD CONSTRAINT results_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE SET NULL;
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'leaderboard_user_id_fkey') THEN
+                        ALTER TABLE leaderboard ADD CONSTRAINT leaderboard_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'mistakes_username_fkey') THEN
+                        ALTER TABLE mistakes ADD CONSTRAINT mistakes_username_fkey FOREIGN KEY (username) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE;
+                    END IF;
+                END $$;
+            `);
+        } catch(e) {
+            console.log("Байланыстар бұрыннан бар немесе деректерде сәйкессіздік бар:", e.message);
+        }
+
         // Ескі база болса, category қосу
         await pool.query(`ALTER TABLE results ADD COLUMN IF NOT EXISTS category VARCHAR(255) DEFAULT 'Жалпы';`);
         console.log('✅ Дерекқор құрылымы (5 кесте) толық орнатылды және жұмысқа дайын!');

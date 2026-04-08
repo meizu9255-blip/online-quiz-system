@@ -33,14 +33,14 @@ const createTables = async () => {
         await pool.query(`
             CREATE TABLE IF NOT EXISTS results (
                 id SERIAL PRIMARY KEY,
-                quiz_id INTEGER,
+                quiz_id INTEGER REFERENCES quizzes(id) ON DELETE SET NULL,
                 quiz_title VARCHAR(255),
                 score NUMERIC,
                 correct_count INTEGER,
                 total_questions INTEGER,
                 time_spent VARCHAR(50),
-                username VARCHAR(255),
-                user_id INTEGER,
+                username VARCHAR(255) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE,
+                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
                 answers JSONB,
                 date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
@@ -49,7 +49,7 @@ const createTables = async () => {
 
         await pool.query(`
             CREATE TABLE IF NOT EXISTS leaderboard (
-                user_id INTEGER PRIMARY KEY,
+                user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
                 total_xp INTEGER,
                 quizzes_passed INTEGER,
                 average_score NUMERIC,
@@ -57,6 +57,29 @@ const createTables = async () => {
             );
         `);
         console.log("leaderboard кестесі сәтті құрылды.");
+
+        try {
+            await pool.query(`
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'results_user_id_fkey') THEN
+                        ALTER TABLE results ADD CONSTRAINT results_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'results_username_fkey') THEN
+                        ALTER TABLE results ADD CONSTRAINT results_username_fkey FOREIGN KEY (username) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE;
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'results_quiz_id_fkey') THEN
+                        ALTER TABLE results ADD CONSTRAINT results_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE SET NULL;
+                    END IF;
+                    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'leaderboard_user_id_fkey') THEN
+                        ALTER TABLE leaderboard ADD CONSTRAINT leaderboard_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+                    END IF;
+                END $$;
+            `);
+            console.log("Байланыстар (Foreign Keys) орнатылды.");
+        } catch(e) {
+            console.log("Байланыстар бұрыннан бар немесе қате:", e.message);
+        }
 
         console.log("Барлық кестелер дайын! Енді қосымшаны қолдана аласыз.");
     } catch (error) {

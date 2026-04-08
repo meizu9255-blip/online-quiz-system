@@ -268,9 +268,15 @@ const Quiz = () => {
               〈 Алдыңғы
             </button>
             <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 500 }}>📖 {answeredCount}/{currentQuiz.questions.length} жауап</span>
-            <button className="b-blue" onClick={() => setCurrentIndex(prev => prev + 1)} disabled={currentIndex === currentQuiz.questions.length - 1} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              Келесі 〉
-            </button>
+            {currentIndex === currentQuiz.questions.length - 1 ? (
+              <button className="b-blue" onClick={handleFinish} disabled={isSubmitting} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#10b981' }}>
+                {isSubmitting ? 'Сақталуда...' : 'Тестті аяқтау ✓'}
+              </button>
+            ) : (
+              <button className="b-blue" onClick={() => setCurrentIndex(prev => prev + 1)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                Келесі 〉
+              </button>
+            )}
           </div>
         </div>
 
